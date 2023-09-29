@@ -1,0 +1,45 @@
+{% extends "user/base.html" %}
+{% block navigation %}
+<ul>
+    <li><a class="nav-link scrollto active" href="/property/home/">Home</a></li>
+    <li><a class="nav-link scrollto" href="">Property</a></li>
+    <li><a class="nav-link scrollto" href="">Services</a></li>
+    <li><a class="nav-link   scrollto" href="">Portfolio</a></li>
+    <li><a class="nav-link scrollto" href="">Team</a></li>
+    <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
+        <ul>
+            <li><a href="#">Drop Down 1</a></li>
+            <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
+                <ul>
+                    <li><a href="#">Deep Drop Down 1</a></li>
+                    <li><a href="#">Deep Drop Down 2</a></li>
+                    <li><a href="#">Deep Drop Down 3</a></li>
+                    <li><a href="#">Deep Drop Down 4</a></li>
+                    <li><a href="#">Deep Drop Down 5</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Drop Down 2</a></li>
+            <li><a href="#">Drop Down 3</a></li>
+            <li><a href="#">Drop Down 4</a></li>
+        </ul>
+    </li>
+    <li><a class="nav-link scrollto" href="">Contact</a></li>
+    {% if not request.user.is_authenticated %}
+        <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
+        <li><a class="getstarted scrollto" href="/user/signup/">Signup</a></li>
+    {% endif %}
+</ul>
+<i class="bi bi-list mobile-nav-toggle"></i>
+{% endblock %}
+
+{% block content %}
+    {% if request.user.user_type == "owner" %}
+        <h5>Total Property : {{total_property |default:0 }}</h5>
+        <h5>Property for rent : {{total_property_for_rent |default:0 }}</h5>
+        <h5>Property rented : {{total_property_rented |default:0 }}</h5>
+        <h5>Property requests : {{total_pending_requests |default:0 }}</h5>
+    {% else %}
+        <h5>Total Property on rent : {{total_property_on_rent |default:0 }}</h5>
+        <h5>Property Requested : {{total_property_requests |default:0 }}</h5>
+    {% endif %}
+{% endblock %}
