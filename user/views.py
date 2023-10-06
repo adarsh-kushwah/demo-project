@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from user.forms import UserProfileModelForm, AddressModelForm
-from user.models import Location, Address, UserProfile
+from user.models import Location, UserAddress, UserProfile
 
 
 class SignupView(View):

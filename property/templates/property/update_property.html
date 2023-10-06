@@ -1,0 +1,33 @@
+{% extends "property/post_property.html" %}
+{% block post_property %}
+    <div style="border: 1px solid blue;display : flex;flex-direction : row;padding: 5px;">
+        <div style="border: 2px solid yellow;width: 50%;padding:20px 20px 80px 20px;">
+            <h1 style="align-self: center;">
+                Update Property Photo
+            </h1>
+                {% for property in property.propertyimage_set.all %}
+                    <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                    <form method="post" enctype='multipart/form-data' >
+                        {% csrf_token %}
+                        {{proprty_image_form.as_p}}
+                        <input type="hidden" name="updateImage" value="updateImage">
+                        <input type="submit" value="change">
+                    </form>
+                {% empty %}
+                    <h5>Image not available</h5>
+                {% endfor %}
+        </div>
+        <div style="border: 2px solid red;width: 50%;padding: 5px;">
+            <form action="{% if message %}/property/update/{{ property.id }}/{% endif %}" method="post" >
+                <h1 style="align-self: center;">
+                    Update Property
+                </h1>
+                {% csrf_token %}
+                {{property_form.as_p}}
+                
+                {{address_form.as_p}}
+                <input type="submit" value="Update">
+            </form>
+        </div>
+    </div>
+{% endblock %}

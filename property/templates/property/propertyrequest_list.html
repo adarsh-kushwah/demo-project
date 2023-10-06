@@ -1,0 +1,70 @@
+{% extends "user/base.html" %}
+{% block navigation %}
+    <ul>
+        <li><a class="nav-link scrollto " href="/property/home/">Home</a></li>
+        <li><a class="nav-link scrollto" href="">Property</a></li>
+        <li><a class="nav-link scrollto active" href="/property/request/">Requests</a></li>
+        <li><a class="nav-link   scrollto" href="">Portfolio</a></li>
+        <li><a class="nav-link scrollto" href="">Team</a></li>
+        <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+                <li><a href="#">Drop Down 1</a></li>
+                <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
+                    <ul>
+                        <li><a href="#">Deep Drop Down 1</a></li>
+                        <li><a href="#">Deep Drop Down 2</a></li>
+                        <li><a href="#">Deep Drop Down 3</a></li>
+                        <li><a href="#">Deep Drop Down 4</a></li>
+                        <li><a href="#">Deep Drop Down 5</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Drop Down 2</a></li>
+                <li><a href="#">Drop Down 3</a></li>
+                <li><a href="#">Drop Down 4</a></li>
+            </ul>
+        </li>
+        <li><a class="nav-link scrollto" href="">Contact</a></li>
+        {% if not request.user.is_authenticated %}
+            {% block login_signup %}
+                <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
+                <li><a class="getstarted scrollto post_property" href="/user/login/">Post Property</a></li>
+            {% endblock %}
+        {% elif request.user.user_type == "owner" %}
+            <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
+        {% endif %}
+
+    </ul>
+    <i class="bi bi-list mobile-nav-toggle"></i>
+        
+{% endblock %}
+
+{% block content %}
+    {% for property_request in propertyrequest_list %}
+        <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
+            <div style="border: 2px solid yellow;width: 30%;">
+                {% for property in property_request.property.propertyimage_set.all %}    
+                    <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                {% empty %}
+                    <h5>Image not available</h5>
+                {% endfor %}
+            </div>
+            <div style="border: 2px solid red;width: 80%;padding: 5px;">
+                <h4 >Name:  {{property_request.property.name|default:"not available"}} </h4>
+                <h4 >Address: {{property_request.property.propertyaddress.full_address|default:"not available"}} </h4>
+                <h4 >Type: {{property_request.property.property_type|default:"not available"}}</h4>
+                <h4>Rent amount : {{property_request.property.rent_amount}}</h4>
+                <h4>Requested date : {{property_request.created_at.date}}</h4>
+                <h4>Requested start date :{{property_request.request_start_date}}</h4>
+                <h4>Requested end date :{{property_request.request_end_date|default:" not available"}}</h4>
+                {% if request.user.user_type == "renter" %}
+                    <h4>Owner name : {{property_request.property.owner.get_full_name|default:"Not available"}}</h4>
+                    <h4>Contact number : {{ property_request.property.owner.phone_number}}</h4>
+                    <h4>Status : {{property_request.status}}</h4>
+                {% else %}
+                    <h4>Renter name : {{property_request.user.get_full_name|default:"not available"}}</h4>
+                    <h4>Contact number : {{property_request.user.phone_number}}</h4>
+                {% endif %}
+            </div>        
+        </div>
+    {% endfor %}
+{% endblock %}

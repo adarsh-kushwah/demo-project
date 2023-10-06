@@ -1,0 +1,32 @@
+{% extends "user/base.html" %}
+{% block content %}
+    <div style="border: 1px solid blue;display : flex;flex-direction : row;padding: 5px;">
+        <div style="border: 2px solid yellow;width: 50%;padding:20px 20px 80px 20px;">
+            {% for property in property.propertyimage_set.all %}
+                <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+            {% empty %}
+                <h5>Image not available</h5>
+            {% endfor %}
+        </div>
+        <div style="border: 2px solid red;width: 50%;padding: 5px;">
+            <h3>Name : {{property.name}}</h3>
+            <h3>Address : {{property.propertyaddress.full_address}}</h3>
+            <h3>Type : {{property.property_type}}</h3>
+            <h3>Rent amount : {{property.rent_amount}}</h3>
+            <h3>Owner name : {{property.owner.get_full_name|default:"Not available"}}</h3>
+            <h3>Contact number : {{ property.owner.phone_number}}</h3>
+        </div>
+    </div>
+    <div style="border: 2px solid rgb(177, 174, 186);padding: 15px;">
+        
+        <form method="post">
+            {% csrf_token %}
+            <div style="position: relative;left: 43%;">
+                <h2 >Request Property</h2>
+            {{request_property_form.as_p}}
+            <input type="submit" value="request">
+            </div>
+            
+        </form>
+    </div>
+{% endblock %}

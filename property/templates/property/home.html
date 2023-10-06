@@ -1,45 +1,37 @@
 {% extends "user/base.html" %}
-{% block navigation %}
-<ul>
-    <li><a class="nav-link scrollto active" href="/property/home/">Home</a></li>
-    <li><a class="nav-link scrollto" href="">Property</a></li>
-    <li><a class="nav-link scrollto" href="">Services</a></li>
-    <li><a class="nav-link   scrollto" href="">Portfolio</a></li>
-    <li><a class="nav-link scrollto" href="">Team</a></li>
-    <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
-        <ul>
-            <li><a href="#">Drop Down 1</a></li>
-            <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                <ul>
-                    <li><a href="#">Deep Drop Down 1</a></li>
-                    <li><a href="#">Deep Drop Down 2</a></li>
-                    <li><a href="#">Deep Drop Down 3</a></li>
-                    <li><a href="#">Deep Drop Down 4</a></li>
-                    <li><a href="#">Deep Drop Down 5</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Drop Down 2</a></li>
-            <li><a href="#">Drop Down 3</a></li>
-            <li><a href="#">Drop Down 4</a></li>
-        </ul>
-    </li>
-    <li><a class="nav-link scrollto" href="">Contact</a></li>
-    {% if not request.user.is_authenticated %}
-        <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
-        <li><a class="getstarted scrollto" href="/user/signup/">Signup</a></li>
-    {% endif %}
-</ul>
-<i class="bi bi-list mobile-nav-toggle"></i>
-{% endblock %}
+
 
 {% block content %}
-    {% if request.user.user_type == "owner" %}
-        <h5>Total Property : {{total_property |default:0 }}</h5>
-        <h5>Property for rent : {{total_property_for_rent |default:0 }}</h5>
-        <h5>Property rented : {{total_property_rented |default:0 }}</h5>
-        <h5>Property requests : {{total_pending_requests |default:0 }}</h5>
-    {% else %}
-        <h5>Total Property on rent : {{total_property_on_rent |default:0 }}</h5>
-        <h5>Property Requested : {{total_property_requests |default:0 }}</h5>
-    {% endif %}
+    {% for property in property %}
+        <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
+            <div style="border: 2px solid yellow;width: 30%;">
+                {% for property in property.propertyimage_set.all %}    
+                    <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                {% empty %}
+                    <h5>Image not available</h5>
+                {% endfor %}
+            </div>
+            <div style="border: 2px solid red;width: 80%;padding: 5px;">
+                <h4 >Name:  {{property.name|default:"not available"}} </h4>
+                <h4 >Address: {{property.propertyaddress.full_address|default:"not available"}} </h4>
+                <h4 >Type: {{property.property_type|default:"not available"}}</h4>
+            </div>
+                <button >
+                    {% if request.user.user_type == "owner" %}
+                        <a href="/property/update/{{property.id}}/">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+                            </svg>
+                            Edit
+                        </a>
+                    {% elif request.user.user_type == "renter" %}
+                        <a href="/property/detail/{{property.id}}">
+                            <i class="bi bi-arrow-right"></i><br>
+                            see detail
+                        </a>    
+                    {% endif %}
+                </button>
+            
+        </div>
+    {% endfor %}
 {% endblock %}

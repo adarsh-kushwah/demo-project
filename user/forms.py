@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
-from user.models import Address, UserProfile, Location
+from user.models import UserAddress, UserProfile, Location
 
 
 class AddressModelForm(forms.ModelForm):
@@ -23,7 +23,7 @@ class AddressModelForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Address
+        model = UserAddress
         fields = ["state", "city", "postal_code", "street_address"]
 
 

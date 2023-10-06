@@ -1,5 +1,5 @@
 from django.db import models
-from user.models import UserProfile, Address
+from user.models import UserProfile, BaseAddress
 
 
 class Property(models.Model):
@@ -11,7 +11,6 @@ class Property(models.Model):
         ("flat_3bkh", "Flat-3bhk"),
     )
     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    address = models.OneToOneField(Address, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=20, null=True)
     property_type = models.CharField(
         max_length=20, choices=PROPERTY_TYPES_CHOICES, default="house"
@@ -23,6 +22,16 @@ class Property(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f'{self.name} {self.property_type}'
+
+
+class PropertyAddress(BaseAddress):
+    property = models.OneToOneField(Property, on_delete=models.CASCADE)
+
+    def full_address(self):
+        return f"{self.street_address}, {self.location.city}, {self.location.postal_code}, {self.location.state}"
 
 
 class PropertyImage(models.Model):
@@ -47,18 +56,34 @@ class Amenity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Booking(models.Model):
+
+class PropertyRequest(models.Model):
+    STATUS_CHOICES = (
+        ("processing", "Processing"),
+        ("rejected", "Rejected"),
+        ("approved", "Approved"),
+    )
     user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True)
-    requested_date = models.DateTimeField(auto_now_add=True)
-    is_approved = models.BooleanField(default=False)
-    approved_date = models.DateTimeField(blank=True, null=True)
-    leaving_date = models.DateTimeField(blank=True, null=True)
+    booking = models.OneToOneField('Booking', on_delete=models.SET_NULL, null=True)
+    request_start_date = models.DateField()
+    request_end_date = models.DateField(blank=True, null=True)
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="processing"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Booking(models.Model):
+    start_date = models.DateField(blank=True)
+    end_date = models.DateField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
 class Agreement(models.Model):
-    property = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    property = models.ForeignKey(Booking, on_delete=models.CASCADE)
     document = models.FileField(upload_to="aggrement")
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now=True)

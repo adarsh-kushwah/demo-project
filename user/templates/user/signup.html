@@ -1,6 +1,8 @@
 {% extends "user/login_signup.html" %}
 {% load static %}
-
+{% block login_signup %}
+    <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
+{% endblock %}
 {% block login_signup_content %}
         <form id="signupform" method="post" action="{% url 'signup' %}">
             {% csrf_token %}

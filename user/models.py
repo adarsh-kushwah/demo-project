@@ -1,7 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-
 
 class Location(models.Model):
     state = models.CharField(max_length=100)
@@ -13,7 +11,7 @@ class Location(models.Model):
 
 
 class UserProfile(AbstractUser):
-    USER_TYPE_CHOICES = (("renter", " Renter"), ("owner", "Owner"))
+    USER_TYPE_CHOICES = (("renter", "Renter"), ("owner", "Owner"))
     MARRIAGE_STATUS_CHOICES = (
         ("single", "Single"),
         ("married", "Married"),
@@ -42,9 +40,15 @@ class UserProfile(AbstractUser):
         return self.username
 
 
-class Address(models.Model):
+class BaseAddress(models.Model):
     street_address = models.CharField(max_length=255)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        abstract = True
+        
+
+class UserAddress(BaseAddress):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
 
     def __str__(self):
