@@ -1,0 +1,10 @@
+{% extends "user/base.html" %}
+{% block content %}
+    <div style="display: flex;justify-content: center;align-items: center;">
+        <form method='post' enctype='multipart/form-data' style="padding:10px;margin: 40px 10px 0px 10px;border: 2px solid blue;">
+            {% csrf_token %}
+            {{approve_request_form.as_p}}
+            <input type='submit' value="submit">
+        </form>
+    </div>
+{% endblock %}

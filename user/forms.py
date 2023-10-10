@@ -10,7 +10,7 @@ class AddressModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         location_list = [("", "Select state")]
         location_list.extend(
-            [(location.state, location.state) for location in Location.objects.all()]
+            [(location.state, location.state) for location in Location.objects.all().distinct('state').order_by('state')]
         )
         self.fields["state"].choices = location_list
 

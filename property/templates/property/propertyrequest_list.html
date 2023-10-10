@@ -2,28 +2,8 @@
 {% block navigation %}
     <ul>
         <li><a class="nav-link scrollto " href="/property/home/">Home</a></li>
-        <li><a class="nav-link scrollto" href="">Property</a></li>
+        <li><a class="nav-link scrollto" href="/property/booking/">Bookings</a></li>
         <li><a class="nav-link scrollto active" href="/property/request/">Requests</a></li>
-        <li><a class="nav-link   scrollto" href="">Portfolio</a></li>
-        <li><a class="nav-link scrollto" href="">Team</a></li>
-        <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
-            <ul>
-                <li><a href="#">Drop Down 1</a></li>
-                <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                    <ul>
-                        <li><a href="#">Deep Drop Down 1</a></li>
-                        <li><a href="#">Deep Drop Down 2</a></li>
-                        <li><a href="#">Deep Drop Down 3</a></li>
-                        <li><a href="#">Deep Drop Down 4</a></li>
-                        <li><a href="#">Deep Drop Down 5</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">Drop Down 2</a></li>
-                <li><a href="#">Drop Down 3</a></li>
-                <li><a href="#">Drop Down 4</a></li>
-            </ul>
-        </li>
-        <li><a class="nav-link scrollto" href="">Contact</a></li>
         {% if not request.user.is_authenticated %}
             {% block login_signup %}
                 <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
@@ -64,7 +44,29 @@
                     <h4>Renter name : {{property_request.user.get_full_name|default:"not available"}}</h4>
                     <h4>Contact number : {{property_request.user.phone_number}}</h4>
                 {% endif %}
-            </div>        
+            </div>
+        </div>
+        <div style="border: 2px solid yellow;width: 100%;padding: 5px;display: flex;justify-content: center;align-items: center;">
+            {% if request.user.user_type == "owner" %}
+                <a href='/property/approve-or-reject-request/{{property_request.id}}/'><button >Approve</button></a>
+                <a href='/property/approve-or-reject-request/{{property_request.id}}/?reject_request=owner'><button style="margin-left:10px">Reject</button></a>
+            {% else %}
+                <a href='/property/approve-or-reject-request/{{property_request.id}}/?reject_request=renter'><button>delete</button></a>
+                <a style='padding-left:10px' href="/property/update-request/{{property_request.id}}/{% if property_request.status == 'rejected' %}?request_type=resend_request {% endif %} ">
+                    <button>
+                        {% if property_request.status == 'rejected' %}
+                            resend request
+                        {% else %}
+                            update request
+                        {% endif %}
+                    </button>
+                </a>
+            {% endif %}
+            </div>
+    {% empty %}
+        <div style="border: 2px solid yellow;width: 100%;padding: 50px 5px 50px 5px;display: flex;justify-content: center;align-items: center;">
+            <h3>No request</h3>
         </div>
     {% endfor %}
+
 {% endblock %}

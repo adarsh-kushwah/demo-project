@@ -76,16 +76,16 @@ class PropertyRequest(models.Model):
 
 
 class Booking(models.Model):
-    start_date = models.DateField(blank=True)
-    end_date = models.DateField(blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
 class Agreement(models.Model):
-    property = models.ForeignKey(Booking, on_delete=models.CASCADE)
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
     document = models.FileField(upload_to="aggrement")
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 

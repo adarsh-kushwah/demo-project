@@ -15,7 +15,7 @@ class SignupView(View):
             state = request.GET.get("state")
             city_list = [
                 (location.city, location.city)
-                for location in Location.objects.filter(state__iexact=state)
+                for location in Location.objects.filter(state__iexact=state).distinct('city').order_by('city')
             ]
             return JsonResponse({"choice_list": city_list}, status=200)
 

@@ -1,0 +1,31 @@
+{% extends "user/base.html" %}
+{% block navigation %}
+    <ul>
+        <li><a class="nav-link scrollto " href="/property/home/">Home</a></li>
+        <li><a class="nav-link scrollto active" href="/property/booking/">Bookings</a></li>
+        <li><a class="nav-link scrollto " href="/property/request/">Requests</a></li>
+
+        {% if not request.user.is_authenticated %}
+            {% block login_signup %}
+                <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
+                <li><a class="getstarted scrollto post_property" href="/user/login/">Post Property</a></li>
+            {% endblock %}
+        {% elif request.user.user_type == "owner" %}
+            <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
+        {% endif %}
+
+    </ul>
+    <i class="bi bi-list mobile-nav-toggle"></i>
+        
+{% endblock %}
+{% block content %}
+    <div style="border: 2px solid yellow;width: 100%;padding: 50px 5px 50px 5px;display: flex;justify-content: center;align-items: center;">
+        <form method='post'>
+            {% csrf_token %}
+            <h3>Update property request</h3>
+            {{form.as_p}}
+            <a href='/property/request/'><input type='button' value='cancel'></a>
+            <input type='submit' value='update'>
+        </form>
+    </div>
+{% endblock %}

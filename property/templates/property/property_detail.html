@@ -18,7 +18,6 @@
         </div>
     </div>
     <div style="border: 2px solid rgb(177, 174, 186);padding: 15px;">
-        
         <form method="post">
             {% csrf_token %}
             <div style="position: relative;left: 43%;">
@@ -26,7 +25,6 @@
             {{request_property_form.as_p}}
             <input type="submit" value="request">
             </div>
-            
         </form>
     </div>
 {% endblock %}
