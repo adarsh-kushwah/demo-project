@@ -9,13 +9,14 @@ from user.models import Location, UserAddress, UserProfile
 
 
 class SignupView(View):
-
     def get(self, request, *args, **kwargs):
         if "state" in request.GET:
             state = request.GET.get("state")
             city_list = [
                 (location.city, location.city)
-                for location in Location.objects.filter(state__iexact=state).distinct('city').order_by('city')
+                for location in Location.objects.filter(state__iexact=state)
+                .distinct("city")
+                .order_by("city")
             ]
             return JsonResponse({"choice_list": city_list}, status=200)
 
@@ -32,11 +33,10 @@ class SignupView(View):
             "profile_form": UserProfileModelForm(),
         }
         return render(request, "user/signup.html", context)
-    
 
     def post(self, request, *args, **kwargs):
         address_form = AddressModelForm(request.POST)
-        profile_form = UserProfileModelForm(request.POST)
+        profile_form = UserProfileModelForm(request.POST, request.FILES)
 
         if profile_form.is_valid() and address_form.is_valid():
             postal_code = address_form.cleaned_data["postal_code"]
@@ -47,7 +47,7 @@ class SignupView(View):
             address_form.save()
             return redirect(reverse("login"))
         else:
-            print('-----=',profile_form.errors,address_form.errors)
-       
+            print("-----=", profile_form.errors, address_form.errors)
+
         context = {"address_form": address_form, "profile_form": profile_form}
         return render(request, "user/signup.html", context)

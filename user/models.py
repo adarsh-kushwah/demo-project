@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class Location(models.Model):
     state = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
@@ -30,7 +31,9 @@ class UserProfile(AbstractUser):
     marital_status = models.CharField(
         max_length=20, choices=MARRIAGE_STATUS_CHOICES, default="single"
     )
-    profile_picture = models.ImageField(upload_to="profile_picture", blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to="profile_picture", blank=True, null=True
+    )
     phone_number = models.CharField(max_length=15)
     alternate_phone_number = models.CharField(max_length=15, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -46,7 +49,7 @@ class BaseAddress(models.Model):
 
     class Meta:
         abstract = True
-        
+
 
 class UserAddress(BaseAddress):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)

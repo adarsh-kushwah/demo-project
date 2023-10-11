@@ -1837,4 +1837,25 @@ section {
 
 .post_property{
   border-color: rgb(68, 255, 0) !important;
+  margin-bottom: 5px;
+}
+
+.owner_profile_pic{
+  border:2px solid blue;
+  max-width: 20%;
+  height: auto;
+  padding:2px;
+  margin-left:20px;
+}
+
+.renter_profile_pic{
+  border:2px solid yellow;
+  max-width: 20%;
+  height: auto;
+  padding:2px;
+  margin-left:20px;
+}
+
+.container{
+  margin-right: 10px;
 }

@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('property', '0001_initial'),
+        ("property", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='booking',
-            name='end_date',
+            model_name="booking",
+            name="end_date",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='booking',
-            name='start_date',
+            model_name="booking",
+            name="start_date",
             field=models.DateField(),
         ),
     ]

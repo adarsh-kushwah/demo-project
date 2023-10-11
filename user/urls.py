@@ -7,7 +7,11 @@ from user.forms import UserProfileModelForm, AddressModelForm
 
 urlpatterns = [
     path(
-        "login/", auth_views.LoginView.as_view(next_page="/property/home/", template_name="user/login.html"), name="login"
+        "login/",
+        auth_views.LoginView.as_view(
+            next_page="/property/home/", template_name="user/login.html"
+        ),
+        name="login",
     ),
     path("signup/", SignupView.as_view(), name="signup"),
 ]

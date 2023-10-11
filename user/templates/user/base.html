@@ -9,7 +9,7 @@
             {% block title_content %}
                 Rentify - Home
             {% endblock %}
-            </title>
+        </title>
         <meta content="" name="description">
         <meta content="" name="keywords">
       
@@ -29,9 +29,18 @@
         <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
         <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
       
+        
         <!-- Template Main CSS File -->
         <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
         
+        {% block js %}
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        {% endblock %}
+
+        {% block css %}
+        
+        {% endblock %}
+
     </head>  
     
     <body>
@@ -41,12 +50,13 @@
                 <h1 class="logo me-auto">
                     <a href="index.html">Rentify</a>
                 </h1>
-                <nav id="navbar" class="navbar">
+                <nav class="navbar">
                     {% block navigation %}
                     <ul>
                         <li><a class="nav-link scrollto active" href="/property/home/">Home</a></li>
                         <li><a class="nav-link scrollto" href="/property/booking/">Bookings</a></li>
                         <li><a class="nav-link scrollto" href="/property/request/">Requests</a></li>
+                        
                         {% if not request.user.is_authenticated %}
                             {% block login_signup %}
                                 <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
@@ -55,15 +65,27 @@
                         {% elif request.user.user_type == "owner" %}
                             <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
                         {% endif %}
+
+                        {% if request.user.is_authenticated %}
+                            <li class="dropdown">
+                                <img class="dropdown rounded-circle shadow-4-strong {% if request.user.user_type == "owner" %} owner_profile_pic {% else %} renter_profile_pic {% endif %}" alt="not available" src="{% if user.profile_picture %} {{user.profile_picture.url}} {% else %} {% static 'img/avatar.png' %} {% endif %}" /> <i class="bi bi-chevron-down"></i>
+                                <ul>
+                                <li style='padding:5px'>Username : {{request.user.username}}</li>
+                                <li><a href="#">Drop Down 2</a></li>
+                                <li><a href="#">Drop Down 3</a></li>
+                                <li><a href="#">Drop Down 4</a></li>
+                                </ul>
+                            </li>
+                          {% endif %}
                     </ul>
-                    <i class="bi bi-list mobile-nav-toggle"></i>
-                          
+                    
                     {% endblock %}
                 </nav><!-- .navbar -->
             </div>
         </header>
         <!-- End Header -->
         {% block herosection %}
+        
             <!-- ======= Hero Section ======= -->
             <section id="hero" class="d-flex align-items-center">
                 <div class="container">

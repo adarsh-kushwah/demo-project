@@ -24,7 +24,7 @@ class Property(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f'{self.name} {self.property_type}'
+        return f"{self.name} {self.property_type}"
 
 
 class PropertyAddress(BaseAddress):
@@ -56,7 +56,6 @@ class Amenity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-
 class PropertyRequest(models.Model):
     STATUS_CHOICES = (
         ("processing", "Processing"),
@@ -65,7 +64,7 @@ class PropertyRequest(models.Model):
     )
     user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True)
-    booking = models.OneToOneField('Booking', on_delete=models.SET_NULL, null=True)
+    booking = models.OneToOneField("Booking", on_delete=models.SET_NULL, null=True)
     request_start_date = models.DateField()
     request_end_date = models.DateField(blank=True, null=True)
     status = models.CharField(
