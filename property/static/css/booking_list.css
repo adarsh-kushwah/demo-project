@@ -1,0 +1,8 @@
+
+#current_booking, #booking_history{
+    border : 2px solid rgb(20, 91, 233) !important;
+}
+
+#booking_history{
+    display: none;
+}

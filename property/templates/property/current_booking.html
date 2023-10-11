@@ -1,0 +1,48 @@
+{% for booking in booking_list %}
+    <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
+        <div style="border: 2px solid yellow;width: 30%;">
+            {% for property in booking.propertyrequest.property.propertyimage_set.all %}    
+                <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+            {% empty %}
+                <h5>Image not available</h5>
+            {% endfor %}
+        </div>
+        <div style="border: 2px solid red;width: 80%;padding: 5px;">
+            <h4 >Name:  {{booking.propertyrequest.property.name|default:"not available"}} </h4>
+            <h4 >Address: {{booking.propertyrequest.property.propertyaddress.full_address|default:"not available"}} </h4>
+            <h4 >Type: {{booking.propertyrequest.property.property_type|default:"not available"}}</h4>
+            <h4>Rent amount : {{booking.propertyrequest.property.rent_amount}}</h4>
+            <h4>Requested date : {{booking.propertyrequest.created_at.date}}</h4>
+            <h4>Start date :{{booking.start_date}}</h4>
+            <h4>End date :{{booking.end_date|default:" not available"}}</h4>
+            <h4>Approved date : {{booking.created_at.date}}
+            {% if request.user.user_type == "renter" %}
+                <h4>Owner name : {{booking.propertyrequest.property.owner.get_full_name|default:"Not available"}}</h4>
+                <h4>Contact number : {{ booking.propertyrequest.property.owner.phone_number}}</h4>
+                <h4>Status : {{booking.propertyrequest.status}}</h4>
+            {% else %}
+                <h4>Renter name : {{booking.propertyrequest.user.get_full_name|default:"not available"}}</h4>
+                <h4>Contact number : {{booking.propertyrequest.user.phone_number}}</h4>
+            {% endif %}
+        </div>
+    </div>
+    {% if booking_history != 'true' %}
+    
+    <div style="border: 2px solid yellow;width: 100%;padding: 5px;display: flex;justify-content: center;align-items: center;">
+        <a href='/property/leave/{{booking.propertyrequest.property.id}}/'>
+            <button >
+                {% if request.user.user_type == "owner" %}
+                    Remove renter
+                {% else %}
+                    Leave property
+                {% endif %}
+            </button>
+        </a>
+    </div>
+    {%endif%}
+{% empty %}
+    <div style="border: 2px solid yellow;width: 100%;padding: 50px 5px 50px 5px;display: flex;justify-content: center;align-items: center;">
+        <h3>No current Bookings</h3>
+    </div>
+{% endfor %}
+{{form}}
