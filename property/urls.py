@@ -10,7 +10,7 @@ from property.views import (
     UpdateRequest,
     LeaveProperty,
     UpdateRequestResponseView,
-    ConfirmBookingView
+    ConfirmBookingView,
 )
 
 
@@ -28,6 +28,14 @@ urlpatterns = [
     path("booking/", BookingList.as_view(), name="bookings"),
     path("update-request/<int:pk>/", UpdateRequest.as_view(), name="update_view"),
     path("leave/<int:pk>/", LeaveProperty.as_view(), name="leave_property"),
-    path("update-request-response/<int:pk>/", UpdateRequestResponseView.as_view(), name='update_request_response'),
-    path("confirm-booking/<int:pk>/", ConfirmBookingView.as_view(), name="confirm_booking"),
+    path(
+        "update-request-response/<int:pk>/",
+        UpdateRequestResponseView.as_view(),
+        name="update_request_response",
+    ),
+    path(
+        "confirm-booking/<int:pk>/",
+        ConfirmBookingView.as_view(),
+        name="confirm_booking",
+    ),
 ]

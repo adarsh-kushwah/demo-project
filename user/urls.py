@@ -17,17 +17,15 @@ urlpatterns = [
     path("profile/<int:pk>/", ViewProfile.as_view(), name="profile"),
     path(
         "logout/",
-        auth_views.LogoutView.as_view(
-            next_page="/user/login/"
-        ),
+        auth_views.LogoutView.as_view(next_page="/user/login/"),
         name="logout",
     ),
     path(
         "change-password/",
         auth_views.PasswordChangeView.as_view(
-            success_url='/user/login/',template_name="user/change_password.html"
+            success_url="/user/login/", template_name="user/change_password.html"
         ),
         name="change_password",
     ),
-    path("",include('django.contrib.auth.urls')),
+    path("", include("django.contrib.auth.urls")),
 ]

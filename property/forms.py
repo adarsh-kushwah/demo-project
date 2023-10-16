@@ -68,29 +68,22 @@ class RequestPropertyModelForm(forms.ModelForm):
 
 
 class PropertyRequestResponseForm(forms.ModelForm):
-    
     class Meta:
         model = PropertyRequestResponse
-        exclude = ['user', 'property', 'status']
-        labels = {
-            "rent_amount": "Requested rent amount",
-            "document" : "sent aggrement"
-        }
+        exclude = ["user", "property", "status"]
+        labels = {"rent_amount": "Requested rent amount", "document": "sent aggrement"}
         widgets = {
             "start_date": forms.widgets.DateInput(attrs={"type": "date"}),
             "end_date": forms.widgets.DateInput(attrs={"type": "date"}),
-            "request_token": forms.HiddenInput()
+            "request_token": forms.HiddenInput(),
         }
 
 
 class AgreementModelForm(forms.ModelForm):
-    
     class Meta:
         model = Agreement
         fields = ["document"]
-        labels = {
-            "document" : "sent aggrement"
-        }
+        labels = {"document": "sent aggrement"}
         help_texts = {
-            'document': 'Upload agreement after doing signature on agreement send by owner',
+            "document": "Upload agreement after doing signature on agreement send by owner",
         }
