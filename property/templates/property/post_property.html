@@ -1,12 +1,7 @@
 {% extends "user/base.html" %}
-{% block navigation %}
-<ul>
-    <li><a class="nav-link scrollto " href="/property/home/">Home</a></li>
-    <li><a class="nav-link scrollto" href="/property/booking/">Bookings</a></li>
-    <li><a class="nav-link scrollto" href="/property/request/">Requests</a></li>
-</ul>
-<i class="bi bi-list mobile-nav-toggle"></i>
-{% endblock %}
+{% block post_property_nav %}
+        <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
+    {% endblock %}
 {% block content %}
     {% block post_property %}
         <h1 style="align-self: center;">

@@ -1,5 +1,7 @@
 {% extends "user/base.html" %}
-
+{% block home %}
+    <li><a class="nav-link scrollto active" href="/property/home/">Home</a></li>
+{% endblock %}
 {% block content %}
     {% for property in property %}
         <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
@@ -23,7 +25,7 @@
                             </svg>
                             Edit
                         </a>
-                    {% elif request.user.user_type == "renter" %}
+                    {% else %}
                         <a href="/property/detail/{{property.id}}">
                             <i class="bi bi-arrow-right"></i><br>
                             see detail

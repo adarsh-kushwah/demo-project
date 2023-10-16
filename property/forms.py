@@ -6,8 +6,8 @@ from property.models import (
     Property,
     PropertyAddress,
     PropertyImage,
-    PropertyRequest,
     Agreement,
+    PropertyRequestResponse,
 )
 
 
@@ -46,21 +46,51 @@ class AddressModelForm(forms.ModelForm):
 
 class RequestPropertyModelForm(forms.ModelForm):
     class Meta:
-        model = PropertyRequest
-        fields = ["request_start_date", "request_end_date"]
+        model = PropertyRequestResponse
+        fields = ["start_date", "end_date", "rent_amount"]
         widgets = {
-            "request_start_date": forms.widgets.DateInput(attrs={"type": "date"}),
-            "request_end_date": forms.widgets.DateInput(attrs={"type": "date"}),
+            "start_date": forms.widgets.DateInput(attrs={"type": "date"}),
+            "end_date": forms.widgets.DateInput(attrs={"type": "date"}),
         }
 
 
-class ApproveRequestForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["rent_aggrement"].required = True
+# class PropertyRequestResponseForm(forms.Form):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields["rent_aggrement"].required = True
 
-    start_date = forms.DateField(widget=forms.widgets.DateInput(attrs={"type": "date"}))
-    end_date = forms.DateField(
-        required=False, widget=forms.widgets.DateInput(attrs={"type": "date"})
-    )
-    rent_aggrement = forms.FileField()
+#     start_date = forms.DateField(widget=forms.widgets.DateInput(attrs={"type": "date"}))
+#     end_date = forms.DateField(
+#         required=False, widget=forms.widgets.DateInput(attrs={"type": "date"})
+#     )
+#     rent_aggrement = forms.FileField()
+#     renquested_rent_amount = forms.IntegerField()
+
+
+class PropertyRequestResponseForm(forms.ModelForm):
+    
+    class Meta:
+        model = PropertyRequestResponse
+        exclude = ['user', 'property', 'status']
+        labels = {
+            "rent_amount": "Requested rent amount",
+            "document" : "sent aggrement"
+        }
+        widgets = {
+            "start_date": forms.widgets.DateInput(attrs={"type": "date"}),
+            "end_date": forms.widgets.DateInput(attrs={"type": "date"}),
+            "request_token": forms.HiddenInput()
+        }
+
+
+class AgreementModelForm(forms.ModelForm):
+    
+    class Meta:
+        model = Agreement
+        fields = ["document"]
+        labels = {
+            "document" : "sent aggrement"
+        }
+        help_texts = {
+            'document': 'Upload agreement after doing signature on agreement send by owner',
+        }

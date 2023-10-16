@@ -50,6 +50,9 @@ class BaseAddress(models.Model):
     class Meta:
         abstract = True
 
+    def full_address(self):
+        return f"{self.street_address}, {self.location.city}, {self.location.postal_code}, {self.location.state}"
+
 
 class UserAddress(BaseAddress):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)

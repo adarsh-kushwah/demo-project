@@ -1,14 +1,16 @@
-from django.shortcuts import render, redirect
-from django.views import View
-from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
+from django.views import View
+from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
 
 from user.forms import UserProfileModelForm, AddressModelForm
 from user.models import Location, UserAddress, UserProfile
+from user.mixins import LogoutIfAuthenticatedMixin
 
 
-class SignupView(View):
+class SignupView(LogoutIfAuthenticatedMixin, View):
     def get(self, request, *args, **kwargs):
         if "state" in request.GET:
             state = request.GET.get("state")
@@ -51,3 +53,17 @@ class SignupView(View):
 
         context = {"address_form": address_form, "profile_form": profile_form}
         return render(request, "user/signup.html", context)
+
+
+class ViewProfile(LoginRequiredMixin, DetailView):
+    model = UserProfile
+    login_url = "/user/login/"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print('----->')
+        return context
+
+
+class UpdateProfile(LoginRequiredMixin, View):
+    pass

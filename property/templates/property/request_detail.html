@@ -1,0 +1,45 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block content %}
+    <div style="display: flex;justify-content: center;align-items: center;">
+        {% if property_request.status == 'responsed' %}
+            <div style='border:2px solid blue;margin-top:80px;padding:20px;border-radius:25px;'>
+                <h5>Property Rent amount :- {{property_request.property.rent_amount}}</h5>
+                <h5>Renter Requested Rent amount :- {{property_request.rent_amount}}</h5>
+                <h5>Renter Requested Start date :- {{property_request.start_date}}</h5>
+                <h5>Renter End date :- {{property_request.end_date}}</h5>
+                <h5>Owner Response Rent amount :- {{request_response.rent_amount}}</h5>
+                <h5>Owner Response Start date :- {{request_response.start_date}}</h5>
+                <h5>Owner Response End date :- {{request_response.end_date}}</h5>
+                <h5>Owner Response Agreement :- <a href="/media/{{property_request.propertyrequestresponse.document}}" target="_blank">owner aggrement</a></h5>
+            </div>
+            {% if request.user.user_type == "renter" %}
+                <div style='border:2px solid blue;margin-top:80px;padding:20px;border-radius:25px;margin-left:50px'>
+                    <h5>Please confirm to continue with booking</h5>
+                    <form method="post" enctype='multipart/form-data' action="/property/confirm-booking/{{request_response.id}}/">
+                        {% csrf_token %}
+                        {{agreement_form.as_p}}
+                        <input type="submit" value="Confirm booking" >
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if user.user_type == 'owner' %}
+            <div style='border:2px solid blue;margin-top:80px;padding:20px;border-radius:25px;margin-left:50px'>
+                <form method='post' enctype='multipart/form-data' style="padding:10px;" action="{% if property_request.status == 'responsed' %}/property/update-request-response/{{request_response.id}}/{% endif %}" >
+                    {% csrf_token %}
+                    <h3>
+                        {% if property_request.status == 'responsed' %}
+                            Update Response
+                        {% else %}
+                            Property Request Response
+                        {% endif %}
+                    </h3>
+                    Property rent amount : {{property_request.property.rent_amount}}
+                    {{request_response_form.as_p}}
+                    <input type='submit' value="{% if property_request.propertyrequestresponse %}Update Response {% else %} Response {% endif %}">
+                </form>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

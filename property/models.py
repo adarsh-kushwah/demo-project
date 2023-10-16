@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import UserProfile, BaseAddress
-
+import uuid
 
 class Property(models.Model):
     PROPERTY_TYPES_CHOICES = (
@@ -30,11 +30,11 @@ class Property(models.Model):
 class PropertyAddress(BaseAddress):
     property = models.OneToOneField(Property, on_delete=models.CASCADE)
 
-    def full_address(self):
-        return f"{self.street_address}, {self.location.city}, {self.location.postal_code}, {self.location.state}"
-
 
 class PropertyImage(models.Model):
+    """
+        model to store images of property
+    """
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="property_images")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -42,6 +42,9 @@ class PropertyImage(models.Model):
 
 
 class Amenity(models.Model):
+    """
+        stores amenity of property
+    """
     STATUS_CHOICES = (
         ("available", "Available"),
         ("unavailable", "Unavailable"),
@@ -56,39 +59,56 @@ class Amenity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class PropertyRequest(models.Model):
+class PropertyRequestResponse(models.Model):
+    """
+        stores renter's request to property and owner's response to property
+        here user is person who requests or response
+    """
     STATUS_CHOICES = (
         ("processing", "Processing"),
+        ("responsed", "Responsed"),
         ("rejected", "Rejected"),
         ("approved", "Approved"),
     )
-    user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
-    property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True)
-    booking = models.OneToOneField("Booking", on_delete=models.SET_NULL, null=True)
-    request_start_date = models.DateField()
-    request_end_date = models.DateField(blank=True, null=True)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="processing"
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-class Booking(models.Model):
+    request_token = models.CharField(default=uuid.uuid4, max_length=36)
+    user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
+    property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True)
+    rent_amount = models.PositiveIntegerField(null=True)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ('request_token', 'user', 'property', 'created_at')
+
+
+class Booking(models.Model):
+    """
+        stores Property booking by renter
+    """
+    property_request_response = models.OneToOneField(PropertyRequestResponse, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 
 class Agreement(models.Model):
+    """
+        stores agreement between owner and renter
+    """
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
-    document = models.FileField(upload_to="aggrement")
+    document = models.FileField(upload_to="aggrement/renter")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
 class Bill(models.Model):
+    """
+        stores bills of property booking
+    """
     BILL_STATUS_CHOICES = (
         ("paid", "Paid"),
         ("partial_paid", "Partially paid"),
@@ -102,6 +122,9 @@ class Bill(models.Model):
 
 
 class Payment(models.Model):
+    """
+        stores payment by renter for a booking
+    """
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
     user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     amount = models.PositiveIntegerField()

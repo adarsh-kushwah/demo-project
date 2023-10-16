@@ -5,10 +5,12 @@ from property.views import (
     PropertyView,
     PropertyDetailView,
     PropertyRequestList,
-    ApproveOrCancelRequest,
+    PropertyRequestResponseView,
     BookingList,
     UpdateRequest,
     LeaveProperty,
+    UpdateRequestResponseView,
+    ConfirmBookingView
 )
 
 
@@ -19,11 +21,13 @@ urlpatterns = [
     path("detail/<int:pk>/", PropertyDetailView.as_view(), name="property_detail"),
     path("request/", PropertyRequestList.as_view(), name="property_request"),
     path(
-        "approve-or-reject-request/<int:pk>/",
-        ApproveOrCancelRequest.as_view(),
-        name="approve_or_reject_request",
+        "property-request-response/<int:pk>/",
+        PropertyRequestResponseView.as_view(),
+        name="property_request_response",
     ),
-    path("booking/", BookingList.as_view(), name="rented"),
+    path("booking/", BookingList.as_view(), name="bookings"),
     path("update-request/<int:pk>/", UpdateRequest.as_view(), name="update_view"),
     path("leave/<int:pk>/", LeaveProperty.as_view(), name="leave_property"),
+    path("update-request-response/<int:pk>/", UpdateRequestResponseView.as_view(), name='update_request_response'),
+    path("confirm-booking/<int:pk>/", ConfirmBookingView.as_view(), name="confirm_booking"),
 ]
