@@ -8,7 +8,7 @@
             {% csrf_token %}
             <h3>Update property request</h3>
             {{form.as_p}}
-            <a href='/property/request/'><input type='button' value='cancel'></a>
+            <a href="{% url 'property_requests' %}"><input type='button' value='cancel'></a>
             <input type='submit' value='update'>
         </form>
     </div>

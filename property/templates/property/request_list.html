@@ -1,6 +1,6 @@
 {% extends "user/base.html" %}
 {% block request %}
-    <li><a class="nav-link scrollto active" href="/property/request/">Requests</a></li>
+    <li><a class="nav-link scrollto active" href="{% url 'property_requests' %}">Requests</a></li>
 {% endblock %}
 
 {% block content %}
@@ -34,21 +34,31 @@
         </div>
         <div style="border: 2px solid yellow;width: 100%;padding: 5px;display: flex;justify-content: center;align-items: center;">
             {% if request.user.user_type == "owner" %}
-                <a href='/property/property-request-response/{{property_request.id}}/'><button >Response</button></a>
-                <a href='/property/property-request-response/{{property_request.id}}/?reject_request=owner'><button style="margin-left:10px">Reject</button></a>
+                <a href="{% url 'request_response' pk=property_request.id %}">
+                    <button >
+                        {% if property_request.status == 'responsed'  %}
+                            Update Response
+                        {% else %}
+                            Response
+                        {% endif %}
+                    </button>
+                </a>
+                <a href="{% url 'request_response' pk=property_request.id %}?reject_request=owner">
+                    <button style="margin-left:10px">Reject</button>
+                </a>
             {% else %}
-                <a href='/property/property-request-response/{{property_request.id}}/?reject_request=renter'><button>delete</button></a>
+                <a href="{% url 'request_response' pk=property_request.id %}?reject_request=renter"><button>delete</button></a>
                 {% if property_request.status == 'responsed'  %}
-                    <a style='padding-left:10px' href='/property/property-request-response/{{property_request.id}}/'>
+                    <a style='padding-left:10px' href="{% url 'request_response' pk=property_request.id %}">
                         <button >View Owner Response</button>
                     </a>
                 {% else %}
                     <a style='padding-left:10px' href="/property/update-request/{{property_request.id}}/{% if property_request.status == 'rejected' %}?request_type=resend_request {% endif %} ">
                         <button>
                             {% if property_request.status == 'rejected' %}
-                                resend request
+                                Resend request
                             {% else %}
-                                update request
+                                Update request
                             {% endif %}
                         </button>
                     </a>

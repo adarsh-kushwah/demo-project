@@ -1,4 +1,5 @@
 from typing import Any
+import os
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,12 +9,13 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
 from django.forms import formset_factory
-from django.db.models import Q
+from django.db.models import Q, Subquery
 from django import forms
 from django.urls import reverse_lazy
 
 
 from user.models import UserProfile
+
 from property.models import (
     Booking,
     PropertyImage,
@@ -30,10 +32,22 @@ from property.forms import (
     AgreementModelForm,
 )
 
-import os
+from rating.models import PropertyRating, RenterRating
 
 
 class Home(View):
+    template_name = "property/home.html"
+
+    """
+        Home view showing properties according to authenticated user
+        User:-
+            Authenticated user -
+                Owner - allow to view and edit his property
+                Renter - allow to view all properties and can request property
+            Anonymous user -
+                can see all the properties but not have access to see detail and request property
+    """
+
     def get(self, request, *args, **kwargs):
         context = {}
         if not request.user.is_anonymous:
@@ -46,11 +60,15 @@ class Home(View):
         else:
             context["property"] = Property.objects.filter(is_available=True)
 
-        return render(request, "property/home.html", context)
+        return render(request, self.template_name, context)
 
 
 class PostPropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
+
+    """
+        Owner can Post new property
+    """
 
     def get(self, request, *args, **kwargs):
         property_form = PropertyForm(initial={"owner": request.user})
@@ -92,9 +110,10 @@ class PostPropertyView(LoginRequiredMixin, View):
         return render(request, "property/post_property.html", context_data)
 
 
-class PropertyView(LoginRequiredMixin, View):
+class UpdatePropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
-
+    template_name = "property/update_property.html" 
+    
     def get(self, request, *args, **kwargs):
         property_id = kwargs["pk"]
         property = get_object_or_404(Property, pk=property_id)
@@ -107,7 +126,7 @@ class PropertyView(LoginRequiredMixin, View):
             ),
             "proprty_image_form": ProprtyImageModelForm(),
         }
-        return render(request, "property/update_property.html", context_data)
+        return render(request, self.template_name, context_data)
 
     def post(self, request, *args, **kwargs):
         property_id = kwargs["pk"]
@@ -148,13 +167,17 @@ class PropertyView(LoginRequiredMixin, View):
             "proprty_image_form": proprty_image_form,
             "message": "Update Property",
         }
-        return render(request, "property/update_property.html", context_data)
+        return render(request, self.template_name, context_data)
 
 
 class PropertyDetailView(LoginRequiredMixin, DetailView):
     login_url = "/user/login/"
     model = Property
+    """
+        GET :- Detail of selected property with Request Property Form
 
+        POST :- Renter can send request for selected property
+    """
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         property = context["property"]
@@ -173,14 +196,54 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
             request_property_form.instance.user = user
             request_property_form.instance.property = property
             request_property_form.save()
-            return redirect(reverse("property_request"))
+            return redirect(reverse("property_requests"))
 
+
+class UpdateRequest(LoginRequiredMixin, UpdateView):
+    login_url = "/user/login/"
+    model = PropertyRequestResponse
+    fields = ["start_date", "end_date", "rent_amount"]
+    template_name = "property/update_request.html"
+
+    """
+        Renter can update the request to the property untill Owner Responsed
+
+        POST :- Renter can update request untill Owner Responsed,
+                if owner Rejected request then renter can also resend request
+    """
+
+    def get_success_url(self):
+        return reverse_lazy('property_requests')
+    
+    def get_form_class(self):
+        form_class = super().get_form_class()
+        form_class.base_fields["start_date"].widget = forms.widgets.DateInput(
+            attrs={"type": "date"}
+        )
+        form_class.base_fields["end_date"].widget = forms.widgets.DateInput(
+            attrs={"type": "date"}
+        )
+        return form_class
+
+    def post(self, request, *args, **kwargs):
+        request_type = request.GET.get('request_type',None)
+
+        if request_type == "resend_request":
+            property_request = get_object_or_404(
+                PropertyRequestResponse, pk=kwargs["pk"]
+            )
+            property_request.status = "processing"
+            property_request.save()
+
+        return super(UpdateRequest, self).post(request, **kwargs)
 
 class PropertyRequestList(LoginRequiredMixin, ListView):
     login_url = "/user/login/"
     model = PropertyRequestResponse
     template_name = "property/request_list.html"
-
+    """
+        Showing all Renter's Requests for Property to owner 
+    """
     def get_queryset(self):
         user_id = self.request.user.id
         if self.request.user.user_type == "owner":
@@ -190,7 +253,7 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
             ).distinct("property")
         else:
             queryset = self.model.objects.filter(
-                ~Q(status="approved"), user_id=user_id
+                Q(status="processing") | Q(status="responsed") | Q(status="rejected"), user_id=user_id
             ).distinct("property")
         return queryset
 
@@ -204,20 +267,32 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
     #     return context
 
 
-class PropertyRequestResponseView(LoginRequiredMixin, View):
+class RequestResponseView(LoginRequiredMixin, View):
+    template_name = "property/request_detail.html"
+
+    """
+        GET :- Owner can response to Renter's request
+            Showing PropertyRequestResponse form 
+            If owner responded to renter's request then initial data to the form will be the responded values, and if owner not responded then initail data will be renter's requested values
+        
+        POST :- Owner can response to renter's request
+    """
+
     def get(self, request, *args, **kwargs):
+
         property_request_id = kwargs["pk"]
         reject_request = request.GET.get("reject_request", None)
         property_request = get_object_or_404(
             PropertyRequestResponse, pk=property_request_id
         )
+
         if reject_request:
             if reject_request == "owner":
-                property_request.status = "rejected"
-                property_request.save()
+                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).update(request_token="rejected")
             else:
-                property_request.delete()
+                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).delete()
             return redirect(reverse("home"))
+        
         request_response = PropertyRequestResponse.objects.filter(
             request_token=property_request.request_token
         ).last()
@@ -247,7 +322,7 @@ class PropertyRequestResponseView(LoginRequiredMixin, View):
 
         context["request_response_form"] = property_request_response_form
         context["agreement_form"] = agreement_form
-        return render(request, "property/request_detail.html", context)
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         property_request_id = kwargs["pk"]
@@ -268,6 +343,20 @@ class PropertyRequestResponseView(LoginRequiredMixin, View):
                 status="responsed"
             )
             return redirect(reverse("home"))
+
+
+class UpdateRequestResponseView(LoginRequiredMixin, UpdateView):
+
+    """
+    Owner can update the renter's request response
+    """
+
+    login_url = "/user/login/"
+    model = PropertyRequestResponse
+    fields = ["rent_amount", "start_date", "end_date"]
+
+    def get_success_url(self):
+        return reverse_lazy('property_requests')
 
 
 class ConfirmBookingView(LoginRequiredMixin, View):
@@ -307,91 +396,31 @@ class BookingList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user_id = self.request.user.id
-        try:
-            property_response = PropertyRequestResponse.objects.get(user__id=user_id)
-        except:
-            return Booking.objects.none()
-
-        if self.request.user.user_type == "owner":
-            queryset = self.model.objects.filter(
-                property_request_response__property__owner__id=user_id,
-                property_request_response__property__is_available=False,
-            )
-        else:
-            property_request = PropertyRequestResponse.objects.get(
-                request_token=property_response.request_token, user__id=user_id
-            )
-            queryset = self.model.objects.filter(
-                property_request_response__request_token=property_request.request_token,
-                property_request_response__property__is_available=False,
-            )
-
-        return queryset
+        
+        quertset = self.model.objects.filter(
+            property_request_response__request_token__in=
+                Subquery(PropertyRequestResponse. objects.filter(
+                    user__id = user_id,
+                    status='approved'
+                ).values('request_token')),
+            ).order_by('created_at')
+        return quertset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user_id = self.request.user.id
-        if self.request.user.user_type == "owner":
-            context["booking_history_list"] = self.model.objects.filter(
-                property_request_response__property__owner__id=user_id,
-                property_request_response__property__is_available=True,
-            )
-        else:
-            try:
-                property_response = PropertyRequestResponse.objects.get(
-                    user__id=user_id
-                )
-            except:
-                return Booking.objects.none()
 
-            property_request = PropertyRequestResponse.objects.get(
-                request_token=property_response.request_token, user__id=user_id
-            )
-            context["booking_history_list"] = self.model.objects.filter(
-                property_request_response__request_token=property_request.request_token,
-                property_request_response__property__is_available=True,
-            )
+        context["booking_history_list"] = self.model.objects.filter(
+            property_request_response__request_token__in=
+                Subquery(PropertyRequestResponse.objects.filter(
+                    user__id = user_id,
+                    status = 'left',
+                ).values('request_token')),
+            ).order_by('created_at')
+        
+        
+
         return context
-
-
-class UpdateRequest(LoginRequiredMixin, UpdateView):
-    login_url = "/user/login/"
-    model = PropertyRequestResponse
-    fields = ["start_date", "end_date", "rent_amount"]
-    template_name = "property/update_request.html"
-    success_url = "/property/request/"
-
-    def get_form_class(self):
-        form_class = super().get_form_class()
-        form_class.base_fields["start_date"].widget = forms.widgets.DateInput(
-            attrs={"type": "date"}
-        )
-        form_class.base_fields["end_date"].widget = forms.widgets.DateInput(
-            attrs={"type": "date"}
-        )
-        return form_class
-
-    def post(self, request, *args, **kwargs):
-        if "request_type" in request.GET:
-            property_request = get_object_or_404(
-                PropertyRequestResponse, pk=kwargs["pk"]
-            )
-            property_request.status = "processing"
-            property_request.save()
-
-        return super(UpdateRequest, self).post(request, **kwargs)
-
-
-class UpdateRequestResponseView(LoginRequiredMixin, UpdateView):
-    """
-    Renter update the property request
-    """
-
-    login_url = "/user/login/"
-    model = PropertyRequestResponse
-    fields = ["rent_amount", "start_date", "end_date"]
-    # success_url = "/property/property-request-response/"
-    success_url = "/property/request/"
 
     # def get_success_url(self):
     #     return reverse_lazy('property_request_response', kwargs={'pk': self.object.property_request.id})
@@ -402,6 +431,7 @@ class LeaveProperty(LoginRequiredMixin, View):
         user = UserProfile.objects.get(username=request.user.username)
         property_id = kwargs["pk"]
         property = get_object_or_404(Property, pk=kwargs["pk"])
+        PropertyRequestResponse.objects.filter(property = property).update(status = 'left')
         property.is_available = True
         property.save()
         return redirect(reverse("home"))

@@ -2,10 +2,10 @@ from django.urls import path
 from property.views import (
     Home,
     PostPropertyView,
-    PropertyView,
+    UpdatePropertyView,
     PropertyDetailView,
     PropertyRequestList,
-    PropertyRequestResponseView,
+    RequestResponseView,
     BookingList,
     UpdateRequest,
     LeaveProperty,
@@ -17,15 +17,11 @@ from property.views import (
 urlpatterns = [
     path("home/", Home.as_view(), name="home"),
     path("post/", PostPropertyView.as_view(), name="post_property"),
-    path("update/<int:pk>/", PropertyView.as_view(), name="property"),
+    path("update/<int:pk>/", UpdatePropertyView.as_view(), name="update_property"),
     path("detail/<int:pk>/", PropertyDetailView.as_view(), name="property_detail"),
-    path("request/", PropertyRequestList.as_view(), name="property_request"),
-    path(
-        "property-request-response/<int:pk>/",
-        PropertyRequestResponseView.as_view(),
-        name="property_request_response",
-    ),
-    path("booking/", BookingList.as_view(), name="bookings"),
+    path("requests/", PropertyRequestList.as_view(), name="property_requests"),
+    path("request-response/<int:pk>/", RequestResponseView.as_view(), name="request_response"),
+    path("bookings/", BookingList.as_view(), name="bookings"),
     path("update-request/<int:pk>/", UpdateRequest.as_view(), name="update_view"),
     path("leave/<int:pk>/", LeaveProperty.as_view(), name="leave_property"),
     path(

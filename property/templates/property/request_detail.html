@@ -2,6 +2,9 @@
 {% load static %}
 {% block content %}
     <div style="display: flex;justify-content: center;align-items: center;">
+        {% if property_request.properyt.is_available == False %}
+            <h5>Already booked by someone</h5>
+        {% else %}
         {% if property_request.status == 'responsed' %}
             <div style='border:2px solid blue;margin-top:80px;padding:20px;border-radius:25px;'>
                 <h5>Property Rent amount :- {{property_request.property.rent_amount}}</h5>
@@ -40,6 +43,7 @@
                     <input type='submit' value="{% if property_request.propertyrequestresponse %}Update Response {% else %} Response {% endif %}">
                 </form>
             </div>
+        {% endif %}
         {% endif %}
     </div>
 {% endblock %}

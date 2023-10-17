@@ -54,25 +54,25 @@
                     {% block navigation %}
                     <ul>
                         {% block home %}
-                            <li><a class="nav-link scrollto " href="/property/home/">Home</a></li>
+                            <li><a class="nav-link scrollto " href="{% url 'home' %}">Home</a></li>
                         {% endblock %}
 
                         {% block booking %}
-                            <li><a class="nav-link scrollto" href="/property/booking/">Bookings</a></li>
+                            <li><a class="nav-link scrollto" href="{% url 'bookings' %}">Bookings</a></li>
                         {% endblock %}
 
                         {% block request %}
-                            <li><a class="nav-link scrollto" href="/property/request/">Requests</a></li>
+                            <li><a class="nav-link scrollto" href="{% url 'property_requests' %}">Requests</a></li>
                         {% endblock %}
 
                         {% if not request.user.is_authenticated %}
                             {% block login_signup %}
-                                <li><a class="getstarted scrollto" href="/user/login/">Login</a></li>
-                                <li><a class="getstarted scrollto post_property" href="/user/login/">Post Property</a></li>
+                                <li><a class="getstarted scrollto" href="{% url 'login' %}">Login</a></li>
+                                <li><a class="getstarted scrollto post_property" href="{% url 'login' %}">Post Property</a></li>
                             {% endblock %}
                         {% elif request.user.user_type == "owner" %}
                             {% block post_property_nav %}
-                                <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
+                                <li><a class="getstarted scrollto post_property" href="{% url 'post_property' %}">Post Property</a></li>
                             {% endblock %}
                         {% endif %}
 
@@ -81,7 +81,7 @@
                                 <img class="dropdown rounded-circle shadow-4-strong {% if request.user.user_type == "owner" %} owner_profile_pic {% else %} renter_profile_pic {% endif %}" alt="not available" src="{% if user.profile_picture %} {{user.profile_picture.url}} {% else %} {% static 'img/avatar.png' %} {% endif %}" /> <i class="bi bi-chevron-down"></i>
                                 <ul>
                                     <li style='padding:5px'>
-                                        <a href='/user/profile/{{request.user.id}}/'>
+                                        <a href="{% url 'profile' pk=request.user.id %}">
                                             View Profile ({{request.user.username}})
                                         </a>
                                     </li>
@@ -89,10 +89,10 @@
                                         <a href="#">Update Profile</a>
                                     </li>
                                     <li>
-                                        <a href="/user/change-password/">Change Password</a>
+                                        <a href="{% url 'change_password' %}">Change Password</a>
                                     </li>
                                     <li>
-                                        <a href="/user/logout/">Logout</a>
+                                        <a href="{% url 'logout' %}">Logout</a>
                                     </li>
                                 </ul>
                             </li>
