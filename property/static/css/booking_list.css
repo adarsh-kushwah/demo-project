@@ -6,3 +6,12 @@
 #booking_history{
     display: none;
 }
+
+.checked{
+    color: orange;
+}
+
+.fa{
+    width:35px !important;
+    font-size: xx-large;
+}

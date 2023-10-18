@@ -1,6 +1,6 @@
 from django import forms
-from rating.models PropertyRating
+from rating.models import PropertyRating
 
 # class PropertyRatingModelView(forms.ModelForm):
 #     model = PropertyRating
-#     fields = 
+#     fields = ["rating"]

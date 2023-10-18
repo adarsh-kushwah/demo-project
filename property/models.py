@@ -66,6 +66,9 @@ class PropertyRequestResponse(models.Model):
     """
     stores renter's request to property and owner's response to property
     here user is person who requests or response
+
+    request Token of request sent by renter and response by owner on renter's request
+    will be Same
     """
 
     STATUS_CHOICES = (
@@ -102,6 +105,11 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def renter(self):
+        request_token = self.property_request_response.request_token
+        property_request_response = PropertyRequestResponse.objects.get(request_token = request_token, user__user_type='renter')
+        return property_request_response.user
 
 class Agreement(models.Model):
     """

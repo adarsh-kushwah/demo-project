@@ -28,9 +28,23 @@
         </div>
     </div>
     {% if booking_history != 'true' %}
-        <div style="border: 2px solid blue;width: 100%;padding: 5px;margin:5px;display: flex;justify-content: center;align-items: center;">
-            ratings
-        </div>
+        {% if request.user.user_type == 'renter' %}
+            <div id='rating-div' data-csrf_token={{csrf_token}}  style="border: 2px solid blue;width: 100%;padding: 5px;margin:5px;display: flex;justify-content: center;align-items: center;">
+                <span class="property-rating fa fa-star star1 {% if booking.propertyrating.rating >= 1 %} checked {% endif %}" data-star="1" data-booking_id="{{booking.id}}"></span>
+                <span class="property-rating fa fa-star star2 {% if booking.propertyrating.rating >= 2 %} checked {% endif %}" data-star="2" data-booking_id="{{booking.id}}"></span>
+                <span class="property-rating fa fa-star star3 {% if booking.propertyrating.rating >= 3 %} checked {% endif %}" data-star="3" data-booking_id="{{booking.id}}"></span>
+                <span class="property-rating fa fa-star star4 {% if booking.propertyrating.rating >= 4 %} checked {% endif %}" data-star="4" data-booking_id="{{booking.id}}"></span>
+                <span class="property-rating fa fa-star star5 {% if booking.propertyrating.rating == 5 %} checked {% endif %}" data-star="5" data-booking_id="{{booking.id}}"></span>
+            </div>
+        {% else %}
+            <div id='rating-div' data-csrf_token={{csrf_token}}  style="border: 2px solid blue;width: 100%;padding: 5px;margin:5px;display: flex;justify-content: center;align-items: center;">
+                <span class="renter-rating fa fa-star star1 {% if booking.renterrating.rating >= 1 %} checked {% endif %}" data-star="1" data-booking_id="{{booking.id}}"></span>
+                <span class="renter-rating fa fa-star star2 {% if booking.renterrating.rating >= 2 %} checked {% endif %}" data-star="2" data-booking_id="{{booking.id}}"></span>
+                <span class="renter-rating fa fa-star star3 {% if booking.renterrating.rating >= 3 %} checked {% endif %}" data-star="3" data-booking_id="{{booking.id}}"></span>
+                <span class="renter-rating fa fa-star star4 {% if booking.renterrating.rating >= 4 %} checked {% endif %}" data-star="4" data-booking_id="{{booking.id}}"></span>
+                <span class="renter-rating fa fa-star star5 {% if booking.renterrating.rating == 5 %} checked {% endif %}" data-star="5" data-booking_id="{{booking.id}}"></span>
+            </div>
+        {% endif %}
         <div style="border: 2px solid yellow;width: 100%;padding: 5px;display: flex;justify-content: center;align-items: center;">
             
             <a href='/property/leave/{{booking.property_request_response.property.id}}/'>

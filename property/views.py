@@ -12,7 +12,7 @@ from django.forms import formset_factory
 from django.db.models import Q, Subquery
 from django import forms
 from django.urls import reverse_lazy
-
+from django.db.models import Avg
 
 from user.models import UserProfile
 
@@ -396,7 +396,7 @@ class BookingList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user_id = self.request.user.id
-        
+
         quertset = self.model.objects.filter(
             property_request_response__request_token__in=
                 Subquery(PropertyRequestResponse. objects.filter(
@@ -404,6 +404,7 @@ class BookingList(LoginRequiredMixin, ListView):
                     status='approved'
                 ).values('request_token')),
             ).order_by('created_at')
+
         return quertset
 
     def get_context_data(self, **kwargs):
@@ -418,8 +419,6 @@ class BookingList(LoginRequiredMixin, ListView):
                 ).values('request_token')),
             ).order_by('created_at')
         
-        
-
         return context
 
     # def get_success_url(self):
