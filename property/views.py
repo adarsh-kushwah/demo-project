@@ -34,6 +34,7 @@ from property.forms import (
 
 from rating.models import PropertyRating, RenterRating
 
+from rating.forms import PropertyReviewModelForm, RenterReviewModelForm
 
 class Home(View):
     template_name = "property/home.html"
@@ -418,6 +419,9 @@ class BookingList(LoginRequiredMixin, ListView):
                     status = 'left',
                 ).values('request_token')),
             ).order_by('created_at')
+
+        context["property_review_form"] = PropertyReviewModelForm()
+        context["renter_review_form"] = RenterReviewModelForm()
         
         return context
 
