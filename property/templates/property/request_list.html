@@ -1,4 +1,11 @@
 {% extends "user/base.html" %}
+{% load static %}
+{% block css %}
+    {% comment %} star css {% endcomment %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="{% static 'css/request_list.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block request %}
     <li><a class="nav-link scrollto active" href="{% url 'property_requests' %}">Requests</a></li>
 {% endblock %}
@@ -7,28 +14,36 @@
     {% for property_request in propertyrequestresponse_list %}
         <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
             <div style="border: 2px solid yellow;width: 30%;">
-                {% for property in property_request.property.propertyimage_set.all %}    
+                {% for property in property_request.request_response_property.propertyimage_set.all %}    
                     <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
                 {% empty %}
                     <h5>Image not available</h5>
                 {% endfor %}
             </div>
             <div style="border: 2px solid red;width: 80%;padding: 5px;">
-                <h4>Name:  {{property_request.property.name|default:"not available"}} </h4>
-                <h4>Address: {{property_request.property.propertyaddress.full_address|default:"not available"}} </h4>
-                <h4>Type: {{property_request.property.property_type|default:"not available"}}</h4>
-                <h4>Rent amount : {{property_request.property.rent_amount}}</h4>
+                <h4>Name:  {{property_request.request_response_property.name|default:"not available"|capfirst}} </h4>
+                <h4>Address: {{property_request.request_response_property.propertyaddress.full_address|default:"not available"|capfirst}} </h4>
+                <h4>Type: {{property_request.request_response_property.property_type|default:"not available"|capfirst}}</h4>
+                <h4>Rent amount : {{property_request.request_response_property.rent_amount}}</h4>
+
                 <h4>Requested Rent amount : {{property_request.rent_amount}}</h4>
                 <h4>Requested date : {{property_request.created_at.date}}</h4>
                 <h4>Requested start date :{{property_request.start_date}}</h4>
                 <h4>Requested end date :{{property_request.end_date|default:" not available"}}</h4>
                 {% if request.user.user_type == "renter" %}
-                    <h4>Owner name : {{property_request.property.owner.get_full_name|default:"Not available"}}</h4>
-                    <h4>Contact number : {{ property_request.property.owner.phone_number}}</h4>
-                    <h4>Status : {{property_request.status}}</h4>
+                    <h4>Owner name : {{property_request.request_response_property.owner.get_full_name|default:"Not available"|capfirst}}</h4>
+                    <h4>Contact number : {{ property_request.request_response_property.owner.phone_number}}</h4>
+                    <h4>Status : {{property_request.status|capfirst}}</h4>
                 {% else %}
-                    <h4>Renter name : {{property_request.user.get_full_name|default:"not available"}}</h4>
-                    <h4>Contact number : {{property_request.user.phone_number}}</h4>
+                    <h4>Renter name : {{property_request.renter.get_full_name|default:"not available"|capfirst}}</h4>
+                    <h4>Contact number : {{property_request.renter.phone_number}}</h4>
+                    <h4>Renter's Ratings :
+                        <span class="fa fa-star {% if property_request.rating >= 1 %} checked {% endif %}"></span>
+                        <span class="fa fa-star {% if property_request.rating >= 2 %} checked {% endif %}"></span>
+                        <span class="fa fa-star {% if property_request.rating >= 3 %} checked {% endif %}"></span>
+                        <span class="fa fa-star {% if property_request.rating >= 4 %} checked {% endif %}"></span>
+                        <span class="fa fa-star {% if property_request.rating == 5 %} checked {% endif %}"></span>
+                    </h4>
                 {% endif %}
             </div>
         </div>

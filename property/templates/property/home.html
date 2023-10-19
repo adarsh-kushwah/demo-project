@@ -1,7 +1,14 @@
 {% extends "user/base.html" %}
+{% load static %}
 {% block home %}
     <li><a class="nav-link scrollto active" href="{% url 'home' %}">Home</a></li>
+    {% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="{% static 'css/booking_list.css' %}" rel="stylesheet">
 {% endblock %}
+
 {% block content %}
     {% for property in property %}
         <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
@@ -16,6 +23,13 @@
                 <h4 >Name:  {{property.name|default:"not available"}} </h4>
                 <h4 >Address: {{property.propertyaddress.full_address|default:"not available"}} </h4>
                 <h4 >Type: {{property.property_type|default:"not available"}}</h4>
+                <h4>Property Ratings : 
+                    <span class="fa fa-star {% if property.rating >= 1 %} checked {% endif %}"></span>
+                    <span class="fa fa-star {% if property.rating >= 2 %} checked {% endif %}"></span>
+                    <span class="fa fa-star {% if property.rating >= 3 %} checked {% endif %}"></span>
+                    <span class="fa fa-star {% if property.rating >= 4 %} checked {% endif %}"></span>
+                    <span class="fa fa-star {% if property.rating == 5 %} checked {% endif %}"></span>
+                </h4>
             </div>
                 <button >
                     {% if request.user.user_type == "owner" %}

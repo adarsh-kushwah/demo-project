@@ -55,11 +55,11 @@ class Home(View):
             user = UserProfile.objects.get(username=request.user.username)
             context["user"] = user
             if user.user_type == "owner":
-                context["property"] = user.property_set.all()
+                context["property"] = user.property_set.all().annotate(rating=Avg('propertyrating__rating'))
             else:
-                context["property"] = Property.objects.filter(is_available=True)
+                context["property"] = Property.objects.filter(is_available=True).annotate(rating=Avg('propertyrating__rating'))
         else:
-            context["property"] = Property.objects.filter(is_available=True)
+            context["property"] = Property.objects.filter(is_available=True).annotate(rating=Avg('propertyrating__rating'))
 
         return render(request, self.template_name, context)
 
@@ -247,15 +247,17 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
     """
     def get_queryset(self):
         user_id = self.request.user.id
+    
         if self.request.user.user_type == "owner":
             queryset = self.model.objects.filter(
                 Q(status="processing") | Q(status="responsed"),
-                property__owner_id=user_id,
-            ).distinct("property")
+                user = user_id,
+            ).annotate(rating = Avg('request_response_property__renterrating__rating')
+                       )
         else:
             queryset = self.model.objects.filter(
                 Q(status="processing") | Q(status="responsed") | Q(status="rejected"), user_id=user_id
-            ).distinct("property")
+            ).distinct("request_response_property")
         return queryset
 
     # def get_context_data(self, **kwargs):
@@ -422,7 +424,7 @@ class BookingList(LoginRequiredMixin, ListView):
 
         context["property_review_form"] = PropertyReviewModelForm()
         context["renter_review_form"] = RenterReviewModelForm()
-        
+
         return context
 
     # def get_success_url(self):
