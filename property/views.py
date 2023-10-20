@@ -13,6 +13,8 @@ from django.db.models import Q, Subquery
 from django import forms
 from django.urls import reverse_lazy
 from django.db.models import Avg
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden
 
 from user.models import UserProfile
 
@@ -61,6 +63,19 @@ class Home(View):
         else:
             context["property"] = Property.objects.filter(is_available=True).annotate(rating=Avg('propertyrating__rating'))
 
+        if 'search' in request.GET:
+            value = request.GET.get('search')
+            context["property"] = context["property"].filter(
+                Q(name__icontains=value)|
+                Q(property_type__icontains=value)|
+                Q(property_type__icontains=value)|
+                Q(propertyaddress__street_address__icontains=value)|
+                Q(propertyaddress__location__city__icontains=value)
+            )
+        if 'min_price' and 'max_price' in request.GET:
+            min_price = request.GET.get('min_price')
+            max_price = request.GET.get('max_price')
+            context["property"] = context["property"].filter(rent_amount__range=[min_price, max_price])
         return render(request, self.template_name, context)
 
 
@@ -118,6 +133,9 @@ class UpdatePropertyView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         property_id = kwargs["pk"]
         property = get_object_or_404(Property, pk=property_id)
+        user_id = request.user.id
+        if property.owner.id != user_id:
+            return HttpResponseForbidden("You don't have access to update other's property. ")
         postal_code = property.propertyaddress.location.postal_code
         context_data = {
             "property": property,
