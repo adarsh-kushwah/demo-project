@@ -67,15 +67,23 @@ class Home(View):
             value = request.GET.get('search')
             context["property"] = context["property"].filter(
                 Q(name__icontains=value)|
-                Q(property_type__icontains=value)|
-                Q(property_type__icontains=value)|
                 Q(propertyaddress__street_address__icontains=value)|
                 Q(propertyaddress__location__city__icontains=value)
             )
+            context['search'] = value
+
         if 'min_price' and 'max_price' in request.GET:
             min_price = request.GET.get('min_price')
             max_price = request.GET.get('max_price')
             context["property"] = context["property"].filter(rent_amount__range=[min_price, max_price])
+            context['min_price'] = min_price
+            context['max_price'] = max_price
+        
+        if 'property_type' in request.GET:
+            property_type = request.GET.get('property_type')
+            if property_type != 'all':
+                context["property"] = context["property"].filter(property_type__exact=property_type)
+            context['property_type'] = property_type
         return render(request, self.template_name, context)
 
 

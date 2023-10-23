@@ -14,76 +14,121 @@
 {% endblock %}
 
 {% block content %}
-    <div>
+    <div style="position:fixed;z-index:1;width:100%;transition:all 0.5s;">
         <div id ="search_div">        
             <div class="search-box">
                 <form method="GET">
                     <button type='submit' class="btn-search"><i class="fas fa-search"></i></button>
-                    <input id="search_button" name="search" type="text" class="input-search" placeholder="Search by properyt name, location, type ...">
+                    <input id="search_button" name="search" type="text" class="input-search" placeholder="Search by properyt name, location ...">
                 </form>
             </div>
+
+            {% if search %}
+                <div style="display: flex;justify-content: center;align-items: center;">
+                    <p style=" display:inline;color:#fff">Showing result for search : {{search}}<p>
+                </div>
+            {% endif %}
         </div>
-        <div class="range_container">
-            <h4>Price range</h4>
-            <div class="sliders_control" >
-                <input id="fromSlider" type="range" value="1000" min="500" max="95000"/>
-                <input id="toSlider" type="range" value="50000" min="0" max="100000"/>
-                <form method="GET" style="display:inline-block">
-                    <div  style="display:inline-block"class="form_control_container">
-                        <div class="form_control_container__time">Min Price</div>
-                        <input name="min_price" class="form_control_container__time__input" type="number" id="fromInput" value="1000" min="500" max="95000"/>
-                    </div>
-                    <div style="display:inline-block" class="form_control_container">
-                        <div class="form_control_container__time">Max Price</div>
-                        <input name="max_price" class="form_control_container__time__input" type="number" id="toInput" value="50000" min="500" max="100000"/>
-                    </div>
+    </div>
+    <div style="margin-top:{% if search %}95px {% else %}55px{% endif %};">
+        <div style="width:20%;height:100%; position: fixed;background-color: #f9f4f4;padding: 10px;border: 1px solid #d3d3d3;">
+            {% comment %} #f1f1f1  #f9f4f4 {% endcomment %}
+            <h4 style="padding:10px;">Filter by :</h4>
+            <div class="range_container">
+                <h4>Price range</h4>
+                <div class="sliders_control" >
+                    <input id="fromSlider" type="range" value="{{min_price|default:1000}}" min="500" max="95000"/>
+                    <input id="toSlider" type="range" value="{{max_price|default:50000}}" min="0" max="100000"/>
+                    <form id="price_range_filter" action="" method="GET" style="display:inline-block">
+                        <div  style="display:inline-block"class="form_control_container">
+                            <div class="form_control_container__time">Min Price</div>
+                            <input name="min_price" class="form_control_container__time__input" type="number" id="fromInput" value="{{min_price|default:1000}}" min="500" max="95000"/>
+                        </div>
+                        <div style="display:inline-block" class="form_control_container">
+                            <div class="form_control_container__time">Max Price</div>
+                            <input name="max_price" class="form_control_container__time__input" type="number" id="toInput" value="{{max_price|default:50000}}" min="500" max="100000"/>
+                        </div>
+                        {% if search %}
+                            <input type="hidden" name='search' value={{search}} >
+                        {% endif %}
+                        {% if property_type %}
+                            <input type="hidden" name='property_type' value={{property_type}} >
+                        {% endif %}
+                        <input type="submit" value="filter">
+                    </form>
+                </div>
+            </div>
+            <div class="range_container">
+                <h4>Property type</h4>
+                <form action="">
+                    <input type="radio" id="all" name="property_type" value="all" {% if property_type == 'all' or not property_type %} checked{% endif %}>
+                    <label for="all">All</label><br>
+                    <input type="radio" id="house" name="property_type" value="house" {% if property_type == 'house' %} checked {% endif %}>
+                    <label for="house">House</label><br>
+                    <input type="radio" id="apartment" name="property_type" value="apartment" {% if property_type == 'apartment' %} checked {% endif %}>
+                    <label for="apartment">Apartment</label><br>
+                    <input type="radio" id="flat_1bkh" name="property_type" value="flat_1bkh" {% if property_type == 'flat_1bkh' %} checked {% endif %}>
+                    <label for="flat_1bkh">Flat-1bhk</label><br>
+                    <input type="radio" id="flat_2bkh" name="property_type" value="flat_2bkh" {% if property_type == 'flat_2bkh' %} checked {% endif %}>
+                    <label for="flat_2bkh">Flat-2bhk</label><br>
+                    <input type="radio" id="flat_3bkh" name="property_type" value="flat_3bkh" {% if property_type == 'flat_3bkh' %} checked {% endif %}>
+                    <label for="flat_3bkh">Flat-3bhk</label>
+                    {% if search %}
+                        <input type="hidden" name='search' value={{search}} >
+                    {% endif %}
+                    {% if min_price and max_price %}
+                        <input type="hidden" name='min_price' value={{min_price}} >
+                        <input type="hidden" name='max_price' value={{max_price}} >
+                    {% endif %}
                     <input type="submit" value="filter">
                 </form>
             </div>
-            <div class="form_control">
-                
-            </div>
-        </div>    
-    </div> 
-    {% for property in property %}
-        <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
-            <div style="border: 2px solid yellow;width: 30%;">
-                {% for property in property.propertyimage_set.all %}    
-                    <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
-                {% empty %}
-                    <h5>Image not available</h5>
-                {% endfor %}
-            </div>
-            <div style="border: 2px solid red;width: 80%;padding: 5px;">
-                <h4 >Name:  {{property.name|default:"not available"}} </h4>
-                <h4 >Address: {{property.propertyaddress.full_address|default:"not available"}} </h4>
-                <h4 >Type: {{property.property_type|default:"not available"}}</h4>
-                <h4>Rent amount : {{property.rent_amount}} </h4>
-                <h4>Property Ratings : 
-                    <span class="fa fa-star {% if property.rating >= 1 %} checked {% endif %}"></span>
-                    <span class="fa fa-star {% if property.rating >= 2 %} checked {% endif %}"></span>
-                    <span class="fa fa-star {% if property.rating >= 3 %} checked {% endif %}"></span>
-                    <span class="fa fa-star {% if property.rating >= 4 %} checked {% endif %}"></span>
-                    <span class="fa fa-star {% if property.rating == 5 %} checked {% endif %}"></span>
-                </h4>
-            </div>
-                <button >
-                    {% if request.user.user_type == "owner" %}
-                        <a href="{% url 'update_property' pk=property.id %}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
-                            </svg>
-                            Edit
-                        </a>
-                    {% else %}
-                        <a href="{% url 'property_detail' pk=property.id %}">
-                            <i class="bi bi-arrow-right"></i><br>
-                            See detail
-                        </a>    
-                    {% endif %}
-                </button>
-            
         </div>
-    {% endfor %}
+        <div style="min-height:300px;margin-top:50px;margin-left:370px;{% if not property %} display: flex;justify-content: center;align-items: center;{% endif %}">
+            
+            {% for property in property %}
+                <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
+                    <div style="border: 2px solid yellow;width: 30%;">
+                        {% for property in property.propertyimage_set.all %}    
+                            <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                        {% empty %}
+                            <h5>Image not available</h5>
+                        {% endfor %}
+                    </div>
+                    <div style="border: 2px solid red;width: 80%;padding: 5px;">
+                        <h4 >Name:  {{property.name|default:"not available"}} </h4>
+                        <h4 >Address: {{property.propertyaddress.full_address|default:"not available"}} </h4>
+                        <h4 >Type: {{property.property_type|default:"not available"}}</h4>
+                        <h4>Rent amount : {{property.rent_amount}} </h4>
+                        <h4>Property Ratings : 
+                            <span class="fa fa-star {% if property.rating >= 1 %} checked {% endif %}"></span>
+                            <span class="fa fa-star {% if property.rating >= 2 %} checked {% endif %}"></span>
+                            <span class="fa fa-star {% if property.rating >= 3 %} checked {% endif %}"></span>
+                            <span class="fa fa-star {% if property.rating >= 4 %} checked {% endif %}"></span>
+                            <span class="fa fa-star {% if property.rating == 5 %} checked {% endif %}"></span>
+                        </h4>
+                    </div>
+                        <button >
+                            {% if request.user.user_type == "owner" %}
+                                <a href="{% url 'update_property' pk=property.id %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+                                    </svg>
+                                    Edit
+                                </a>
+                            {% else %}
+                                <a href="{% url 'property_detail' pk=property.id %}">
+                                    <i class="bi bi-arrow-right"></i><br>
+                                    See detail
+                                </a>    
+                            {% endif %}
+                        </button>
+                    
+                </div>
+            {% empty %}
+                <h3>No result found</h3>
+            {% endfor %}
+        </div>
+    </div>
     <script src="{% static 'js/home.js' %}"></script>
 {% endblock %}

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "user.apps.UserConfig",
     "property.apps.PropertyConfig",
     "rating.apps.RatingConfig",
+    "payment.apps.PaymentConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

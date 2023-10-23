@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rental Bill</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .address {
+            margin-bottom: 20px;
+        }
+
+        .address h2 {
+            margin: 0;
+        }
+
+        .bill-details {
+            margin-bottom: 20px;
+        }
+
+        .bill-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bill-details th, .bill-details td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .total {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Rental Bill</h1>
+            <p>Date: {{ date }}22-oct-2023</p>
+            <p>Due Date: {{ due_date }}</p>
+        </div>
+        
+        <!-- Owner's Address -->
+        <div class="address">
+            <h2>Owner's Address</h2>
+            <p>{{ owner_name }}Adarsh</p>
+            <p>{{ owner_street }}tejaji nagar indore</p>
+            <p>{{ owner_city }}Indore, {{ owner_state }}MP {{ owner_zip }}452020</p>
+        </div>
+        
+        <!-- Renter's Address -->
+        <div class="address">
+            <h2>Renter's Address</h2>
+            <p>{{ renter_name }}</p>
+            <p>{{ renter_street }}</p>
+            <p>{{ renter_city }}, {{ renter_state }} {{ renter_zip }}</p>
+        </div>
+
+        <div class="bill-details">
+            <table>
+                <tr>
+                    <th>Description</th>
+                    <th>Total</th>
+                </tr>
+                <tr>
+                    <td>{{ item1_description }}</td>
+                    <td>{{ item1_quantity }}</td>
+                    
+                </tr>
+               
+            </table>
+        </div>
+        <div class="total">
+            <p>Total Amount: {{ total_amount }}</p>
+            <p>Past Dues: {{ past_dues }}</p>
+            <p>Discount: {{ discount }}</p>
+            <p>Final Amount Due: {{ final_amount_due }}</p>
+        </div>
+    </div>
+</body>
+</html>

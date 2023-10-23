@@ -56,14 +56,14 @@
     pointer-events: painted;  
   }
   .btn-search:focus ~ .input-search{
-    width: 600px;
+    width: 400px;
     border-radius: 0px;
     background-color: transparent;
     border-bottom:1px solid rgba(255,255,255,.5);
     transition: all 500ms cubic-bezier(0, 0.110, 0.35, 2);
   }
   .input-search:focus{
-    width: 600px;
+    width: 400px;
     border-radius: 0px;
     background-color: transparent;
     border-bottom:1px solid rgba(255,255,255,.5);
@@ -79,8 +79,8 @@
   .range_container {
     display: flex;
     flex-direction: column;
-    width: 15%;
-    margin: 20px ;
+    width: 90%;
+    margin-left: 20px ;
   }
   
   .sliders_control {
@@ -155,5 +155,8 @@
     z-index: 1;
   }
 
+  #price_range_filter{
+    padding-top: 20px;
+  }
 
   /* price bar end */
