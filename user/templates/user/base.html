@@ -65,6 +65,10 @@
                             <li><a class="nav-link scrollto" href="{% url 'property_requests' %}">Requests</a></li>
                         {% endblock %}
 
+                        {% block bill %}
+                            <li><a class="nav-link scrollto" href="{% url 'all_bills' %}">Bills</a></li>
+                        {% endblock %}  
+
                         {% if not request.user.is_authenticated %}
                             {% block login_signup %}
                                 <li><a class="getstarted scrollto" href="{% url 'login' %}">Login</a></li>

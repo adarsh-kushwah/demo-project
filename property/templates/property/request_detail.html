@@ -7,7 +7,7 @@
         {% else %}
         {% if property_request.status == 'responsed' %}
             <div style='border:2px solid blue;margin-top:80px;padding:20px;border-radius:25px;'>
-                <h5>Property Rent amount :- {{property_request.property.rent_amount}}</h5>
+                <h5>Property Rent amount :- {{property_request.request_response_property.rent_amount}}</h5>
                 <h5>Renter Requested Rent amount :- {{property_request.rent_amount}}</h5>
                 <h5>Renter Requested Start date :- {{property_request.start_date}}</h5>
                 <h5>Renter End date :- {{property_request.end_date}}</h5>
@@ -38,7 +38,7 @@
                             Property Request Response
                         {% endif %}
                     </h3>
-                    Property rent amount : {{property_request.property.rent_amount}}
+                    Property rent amount : {{property_request.request_response_property.rent_amount}}
                     {{request_response_form.as_p}}
                     <input type='submit' value="{% if property_request.propertyrequestresponse %}Update Response {% else %} Response {% endif %}">
                 </form>

@@ -125,33 +125,3 @@ class Agreement(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
-class Bill(models.Model):
-    """
-    stores bills of property booking
-    """
-
-    BILL_STATUS_CHOICES = (
-        ("paid", "Paid"),
-        ("partial_paid", "Partially paid"),
-        ("not_paid", "Not paid"),
-    )
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField()
-    status = models.CharField(max_length=20, choices=BILL_STATUS_CHOICES)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-class Payment(models.Model):
-    """
-    stores payment by renter for a booking
-    """
-
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
-    user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
-    amount = models.PositiveIntegerField()
-    source = models.CharField(max_length=20)
-    status = models.CharField(max_length=10)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)

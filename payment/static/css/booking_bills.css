@@ -1,0 +1,13 @@
+.main{
+    border:2px solid blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin : 5px;
+    padding : 5px;
+}
+
+.bill_div{
+    padding: 5px;
+    position: relative;
+}

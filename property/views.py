@@ -402,7 +402,7 @@ class ConfirmBookingView(LoginRequiredMixin, View):
             property_request_response = get_object_or_404(
                 PropertyRequestResponse, pk=property_request_response_id
             )
-            property = property_request_response.property
+            property = property_request_response.request_response_property
             booking = Booking.objects.create(
                 property_request_response=property_request_response
             )

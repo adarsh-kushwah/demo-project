@@ -70,7 +70,7 @@ class RequestPropertyModelForm(forms.ModelForm):
 class PropertyRequestResponseForm(forms.ModelForm):
     class Meta:
         model = PropertyRequestResponse
-        exclude = ["user", "property", "status"]
+        exclude = ["user", "property", "status", "request_response_property"]
         labels = {"rent_amount": "Requested rent amount", "document": "sent aggrement"}
         widgets = {
             "start_date": forms.widgets.DateInput(attrs={"type": "date"}),

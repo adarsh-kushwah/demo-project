@@ -1,0 +1,37 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block bill %}
+    <li><a class="nav-link scrollto active" href="{% url 'all_bills' %}">Bills</a></li>
+    {% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/booking_bills.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    
+    <div class="main">
+        <div>
+            <div>
+                <h3>Generate bill
+            </div>
+            <div class="bill_div">
+                {% if request.user.user_type == "renter" %}
+                    <h4>Owner name : {{booking.property_request_response.request_response_property.owner.get_full_name|default:"Not available"}}</h4>
+                {% else %}
+                    <h4>Renter name : {{booking.property_request_response.user.get_full_name|default:"not available"}}</h4>
+                    <h4>Contact number : {{booking.property_request_response.user.phone_number}}</h4>
+                {% endif %}
+            </div>
+            <div>
+                <form method='post'>
+                    {% csrf_token %}
+                    {{bill_form.as_p}}
+                    <input type='submit' value='Generate' >
+                </form>
+            </div>
+        </div>
+        
+    </div>
+
+{% endblock %}
