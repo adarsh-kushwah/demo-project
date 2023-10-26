@@ -13,17 +13,18 @@
 {% endblock %}
 
 {% block content %}
-<link href="{% static 'css/booking_list.css' %}" rel="stylesheet">
+    <link href="{% static 'css/booking_list.css' %}" rel="stylesheet">
     <div style='display: flex;justify-content: center;align-items: center;padding:10px;'>
         <button id='current_button' style="color:blue">current</button>
         <button id='history_button' style='margin-left:10px;'>history</button>
     </div>
     
+    <div id="booking_history">
+        {% include "property/current_booking.html" with booking_list=booking_history_list booking_history='true' %}
+    </div>
     <div id="current_booking">
         {% include "property/current_booking.html" %} 
     </div>
-    <div id='booking_history'>
-        {% include "property/current_booking.html" with booking_list=booking_history_list booking_history='true' %}
-    </div>
+
     <script src="{% static 'js/booking_list.js' %}"></script>
 {% endblock %}

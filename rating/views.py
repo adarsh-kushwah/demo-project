@@ -28,7 +28,7 @@ class PropertyRatingView( View):
             property_rating.save()
         else:
             PropertyRating.objects.create(renter=user,
-                                       property=booking.property_request_response.property,
+                                       property=booking.property_request_response.request_response_property,
                                        booking = booking,
                                        rating=rating)
         return JsonResponse({})
@@ -53,7 +53,7 @@ class RenterRatingView( View):
             RenterRating.objects.create(
                                         owner = user,
                                         renter=renter,
-                                        property=booking.property_request_response.property,
+                                        property=booking.property_request_response.request_response_property,
                                         booking = booking,
                                         rating=rating)
         return JsonResponse({})
@@ -100,7 +100,7 @@ class RenterReviewView(View):
             user = UserProfile.objects.get(id = request.user.id)         
             renter_review_form.instance.booking = booking
             renter_review_form.instance.renter = booking.renter
-            renter_review_form.instance.property = booking.property_request_response.property
+            renter_review_form.instance.property = booking.property_request_response.request_response_property
             renter_review_form.instance.owner = user
             renter_review_form.save()
             context['description'] = renter_review_form.cleaned_data['description']

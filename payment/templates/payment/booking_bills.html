@@ -16,11 +16,12 @@
                 <h3>Generate bill
             </div>
             <div class="bill_div">
+                <h4>Property : {{booking.property_request_response.request_response_property.name|default:"Not available"}}</h4>
                 {% if request.user.user_type == "renter" %}
                     <h4>Owner name : {{booking.property_request_response.request_response_property.owner.get_full_name|default:"Not available"}}</h4>
                 {% else %}
-                    <h4>Renter name : {{booking.property_request_response.user.get_full_name|default:"not available"}}</h4>
-                    <h4>Contact number : {{booking.property_request_response.user.phone_number}}</h4>
+                    <h4>Renter name : {{booking.renter.get_full_name|default:"not available"}}</h4>
+                    <h4>Contact number : {{booking.renter.phone_number}}</h4>
                 {% endif %}
             </div>
             <div>
@@ -33,5 +34,30 @@
         </div>
         
     </div>
-
+    <div>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Year</th>
+                <th scope="col">Month</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Bill</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for bill in bills %}
+                    <tr>
+                        <td>{{bill.year}}</td>
+                        <td>{{bill.month}}</td>
+                        <td>{{bill.amount}}</td>
+                        <td>{{bill.status}}</td>
+                        <td>
+                            <a href="{{bill.document.url}}" target="_blank">bill</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

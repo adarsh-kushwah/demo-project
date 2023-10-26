@@ -14,7 +14,7 @@ from django import forms
 from django.urls import reverse_lazy
 from django.db.models import Avg
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 
 from user.models import UserProfile
 
@@ -221,7 +221,7 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
             property = get_object_or_404(Property, pk=kwargs["pk"])
             user = get_object_or_404(UserProfile, id=request.user.id)
             request_property_form.instance.user = user
-            request_property_form.instance.property = property
+            request_property_form.instance.request_response_property = property
             request_property_form.save()
             return redirect(reverse("property_requests"))
 
@@ -277,7 +277,8 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
         if self.request.user.user_type == "owner":
             queryset = self.model.objects.filter(
                 Q(status="processing") | Q(status="responsed"),
-                user = user_id,
+               request_response_property__owner = user_id,
+               user__user_type = 'owner',
             ).annotate(rating = Avg('request_response_property__renterrating__rating')
                        )
         else:
@@ -310,18 +311,11 @@ class RequestResponseView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         property_request_id = kwargs["pk"]
-        reject_request = request.GET.get("reject_request", None)
+        
         property_request = get_object_or_404(
             PropertyRequestResponse, pk=property_request_id
         )
 
-        if reject_request:
-            if reject_request == "owner":
-                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).update(request_token="rejected")
-            else:
-                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).delete()
-            return redirect(reverse("home"))
-        
         request_response = PropertyRequestResponse.objects.filter(
             request_token=property_request.request_token
         ).last()
@@ -366,12 +360,27 @@ class RequestResponseView(LoginRequiredMixin, View):
             request_token = property_request_response_form.cleaned_data["request_token"]
             property_request_response_form.instance.user = user
             property_request_response_form.instance.property_request = property_request
-            property_request_response_form.instance.property = property_request.property
+            property_request_response_form.instance.request_response_property = property_request.request_response_property
             property_request_response_form.save()
             PropertyRequestResponse.objects.filter(request_token=request_token).update(
                 status="responsed"
             )
             return redirect(reverse("home"))
+
+    def delete(self, request, *args, **kwargs):
+        property_request_id = kwargs["pk"]
+        property_request = get_object_or_404(
+            PropertyRequestResponse, pk=property_request_id
+        ) 
+        reject_request = request.GET.get("reject_request", None)
+        if reject_request:
+            if reject_request == "owner":
+                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).update(status="rejected")
+            else:
+                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).delete()
+            return JsonResponse({'status':'success'})
+        
+        return JsonResponse({'status':'success'})
 
 
 class UpdateRequestResponseView(LoginRequiredMixin, UpdateView):
@@ -447,7 +456,6 @@ class BookingList(LoginRequiredMixin, ListView):
                     status = 'left',
                 ).values('request_token')),
             ).order_by('created_at')
-
         context["property_review_form"] = PropertyReviewModelForm()
         context["renter_review_form"] = RenterReviewModelForm()
 

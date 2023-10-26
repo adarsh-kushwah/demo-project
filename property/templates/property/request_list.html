@@ -58,11 +58,9 @@
                         {% endif %}
                     </button>
                 </a>
-                <a href="{% url 'request_response' pk=property_request.id %}?reject_request=owner">
-                    <button style="margin-left:10px">Reject</button>
-                </a>
+                <button class="reject_request" data-request_id="{{property_request.id}}" data-reject_request="owner" style="margin-left:10px">Reject</button>
             {% else %}
-                <a href="{% url 'request_response' pk=property_request.id %}?reject_request=renter"><button>delete</button></a>
+                <button class="reject_request" data-request_id="{{property_request.id}}" data-reject_request="renter" >Delete</button>
                 {% if property_request.status == 'responsed'  %}
                     <a style='padding-left:10px' href="{% url 'request_response' pk=property_request.id %}">
                         <button >View Owner Response</button>
@@ -85,5 +83,5 @@
             <h3>No request</h3>
         </div>
     {% endfor %}
-
+    <script src="{% static 'js/request_list.js' %}"></script>
 {% endblock %}

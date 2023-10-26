@@ -20,27 +20,27 @@ from property.models import  Booking, PropertyRequestResponse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.db.models import Q, Subquery
 
-
-class GenerateBillView(View):
-
-    def pdf_generation(self, request, context):
-        html = render_to_string('payment/generate_bill.html', context)
-        pdf_file = HTML(string=html,base_url="").write_pdf()
-        response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'filename="test.pdf"'
-        return response
-
-    def get(self, request, *args, **kwargs):
-        context = {}  # Add something to your context object here
-        p = self.pdf_generation(request,context)
-        return p
+import stripe
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 class AllBookingBillView(View):
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse('all boookings')
+        user_id = self.request.user.id
+        bookings = Booking.objects.filter(
+            property_request_response__request_token__in=
+                Subquery(PropertyRequestResponse. objects.filter(
+                    user__id = user_id,
+                    status='approved'
+                ).values('request_token')),
+            ).order_by('created_at')
+        
+        return render(request, "payment/bills.html", {'bookings':bookings})
 
 
 class BookingBillView(View):
@@ -93,7 +93,7 @@ class BookingBillView(View):
                 'booking':booking,
             }
             bill_pdf = self.calculate_bill(request, booking_id, bill_data_dict)
-            file_name = booking.renter.get_full_name+month+year+'.pdf'
+            file_name = f"{str(year)}-{ str(month) }-{ booking.renter.get_full_name() }.pdf"
             bill_form.instance.document = SimpleUploadedFile(file_name, bill_pdf, content_type='application/pdf')
             bill_form.save()
             return redirect(reverse("booking_bills", args=[booking_id]))
@@ -103,3 +103,45 @@ class BookingBillView(View):
         bills = Bill.objects.filter(booking_id=booking_id)
         context = {'bill_form': bill_form, 'bills':bills, 'booking':booking }
         return render(request, self.template_name, context)
+
+
+
+from django.conf import settings
+class TestPayment(View):
+
+    def get(self, request, *args, **kwargs):
+        context= {'stripe_publishable_key' : settings.STRIPE_PUBLISHABLE_KEY}
+        return render(request,'payment/test.html',context)
+
+
+
+
+@csrf_exempt
+def create_checkout_session(request):
+
+    request_data = json.loads(request.body)
+
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    checkout_session = stripe.checkout.Session.create(
+       
+        payment_method_types=['card'],
+        line_items=[
+            {
+                'price_data': {
+                    'currency': 'INR',
+                    'product_data': {
+                    'name': 'test',
+                    },
+                    'unit_amount': int(1 * 100),
+                },
+                'quantity': 1,
+            }
+        ],
+        mode='payment',
+        success_url=request.build_absolute_uri(
+            reverse('test')
+        ) + "?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url=request.build_absolute_uri(reverse('test')),
+    )
+
+    return JsonResponse({'sessionId': checkout_session.id})

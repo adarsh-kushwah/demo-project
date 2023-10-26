@@ -22,8 +22,8 @@
                 <h4>Contact number : {{ booking.property_request_response.request_response_property.owner.phone_number}}</h4>
                 <h4>Status : {{booking.property_request_response.status}}</h4>
             {% else %}
-                <h4>Renter name : {{booking.property_request_response.user.get_full_name|default:"not available"}}</h4>
-                <h4>Contact number : {{booking.property_request_response.user.phone_number}}</h4>
+                <h4>Renter name : {{booking.renter.get_full_name|default:"not available"}}</h4>
+                <h4>Contact number : {{booking.renter.phone_number}}</h4>
             {% endif %}
         </div>
     </div>

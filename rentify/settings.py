@@ -146,3 +146,9 @@ AUTH_USER_MODEL = "user.UserProfile"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join("media")
+
+if DEBUG:
+    STRIPE_PUBLISHABLE_KEY = 'pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff'
+    STRIPE_SECRET_KEY = 'sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1'
+#pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff
+#sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1
