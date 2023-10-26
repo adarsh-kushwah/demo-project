@@ -1,0 +1,59 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block bill %}
+    <li><a class="nav-link scrollto active" href="{% url 'all_bills' %}">Bills</a></li>
+    {% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/booking_bills.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Booking</th>
+                {% if request.user.user_type == 'renter' %}
+                    <th scope="col">Owner</th>
+                {% else %}
+                    <th scope="col">Renter</th>
+                {% endif %}
+                <th scope="col">Phone</th>
+                <th scope="col">Year</th>
+                <th scope="col">Month</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Bill</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                        {% for bill in booking.bill_set.all %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'bookings' %}">
+                                {{booking.property_request_response.request_response_property.name}}
+                                </a>
+                            </td>
+                            {% if request.user.user_type == 'renter' %}
+                                <td>{{booking.property_request_response.request_response_property.owner.get_full_name|default:"Not available"}}</td>
+                                <td>{{ booking.property_request_response.request_response_property.owner.phone_number}}</td>
+                            {% else %}
+                                <td>{{booking.renter.get_full_name|default:"not available"}}</td>
+                                <td>{{booking.renter.phone_number}}</td>
+                            {% endif %}   
+                            <td>{{bill.year}}</td>
+                            <td>{{bill.month}}</td>
+                            <td>{{bill.amount}}</td>
+                            <td>{{bill.status}}</td>
+                            <td>
+                                <a href="{{bill.document.url}}" target="_blank">bill</a>
+                            </td>
+                        <tr>
+                        {% endfor %}
+                {% endfor %}                
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}
