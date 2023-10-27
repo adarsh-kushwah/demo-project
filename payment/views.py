@@ -29,6 +29,8 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from django.conf import settings
+
 
 class AllBookingBillView(View):
 
@@ -46,6 +48,9 @@ class AllBookingBillView(View):
 
 
 class BookingBillView(View):
+    """
+        bill for particular booking, only for owner
+    """
     template_name = "payment/booking_bills.html"
     form_class = BillModelForm
     bill_status = Bill.BILL_STATUS_CHOICES
@@ -107,16 +112,6 @@ class BookingBillView(View):
         return render(request, self.template_name, context)
 
 
-
-from django.conf import settings
-class TestPayment(View):
-
-    def get(self, request, *args, **kwargs):
-        context= {'stripe_publishable_key' : settings.STRIPE_PUBLISHABLE_KEY}
-        return render(request,'payment/test.html',context)
-
-
-
 class PayBillView(View):
     template_name = "payment/pay_bill.html"
     form_class = PaymentForm
@@ -163,7 +158,6 @@ def create_checkout_session(request, bill_id):
 
 
 class PaymentSuccessView(View):
-    template_name = "payment/payment_success.html"
 
     def get(self, request, *args, **kwargs):
         bill_id = kwargs['bill_id']
@@ -177,6 +171,18 @@ class PaymentSuccessView(View):
             status = 'paid'
         else:
             status = 'partial_paid'
-        Payment.objects.create(user=user, bill= bill, amount=paying_amount, source='stripe', status=status)
+        bill.status = status
+        Payment.objects.create(user=user, bill= bill, amount=paying_amount, source='stripe', status='success')
+        bill.save()
+        context = {'paying_amount':paying_amount}
+        return redirect(reverse('all_bills'))
+
+
+class PaymentFailView(View):
+    template_name = "payment/payment_fail.html"
+
+    def get(self, request, *args, **kwargs):
+        paying_amount = int(request.GET.get('paying_amount'))
         context = {'paying_amount':paying_amount}
         return render(request, self.template_name, context)
+        

@@ -11,6 +11,7 @@ from property.views import (
     LeaveProperty,
     UpdateRequestResponseView,
     ConfirmBookingView,
+    GenerateAgreementPdfView
 )
 
 
@@ -34,4 +35,5 @@ urlpatterns = [
         ConfirmBookingView.as_view(),
         name="confirm_booking",
     ),
+    path("generate-agreement-pdf/<int:property_request_id>/", GenerateAgreementPdfView.as_view(), name="agreement_pdf"),
 ]

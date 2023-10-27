@@ -54,19 +54,6 @@ class RequestPropertyModelForm(forms.ModelForm):
         }
 
 
-# class PropertyRequestResponseForm(forms.Form):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields["rent_aggrement"].required = True
-
-#     start_date = forms.DateField(widget=forms.widgets.DateInput(attrs={"type": "date"}))
-#     end_date = forms.DateField(
-#         required=False, widget=forms.widgets.DateInput(attrs={"type": "date"})
-#     )
-#     rent_aggrement = forms.FileField()
-#     renquested_rent_amount = forms.IntegerField()
-
-
 class PropertyRequestResponseForm(forms.ModelForm):
     class Meta:
         model = PropertyRequestResponse

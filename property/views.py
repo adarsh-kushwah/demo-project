@@ -14,7 +14,7 @@ from django import forms
 from django.urls import reverse_lazy
 from django.db.models import Avg
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
 
 from user.models import UserProfile
 
@@ -37,6 +37,8 @@ from property.forms import (
 from rating.models import PropertyRating, RenterRating
 
 from rating.forms import PropertyReviewModelForm, RenterReviewModelForm
+
+from payment.utility import generate_pdf
 
 class Home(View):
     template_name = "property/home.html"
@@ -277,8 +279,8 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
         if self.request.user.user_type == "owner":
             queryset = self.model.objects.filter(
                 Q(status="processing") | Q(status="responsed"),
-               request_response_property__owner = user_id,
-               user__user_type = 'owner',
+               request_response_property__owner__id = user_id,
+               user__user_type = 'renter',
             ).annotate(rating = Avg('request_response_property__renterrating__rating')
                        )
         else:
@@ -286,15 +288,6 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
                 Q(status="processing") | Q(status="responsed") | Q(status="rejected"), user_id=user_id
             ).distinct("request_response_property")
         return queryset
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     try:
-    #         property_request_response = property_request.propertyrequestresponse
-    #     except :
-    #         property_request_response = None
-    #     print('-------->',property_request_response)
-    #     return context
 
 
 class RequestResponseView(LoginRequiredMixin, View):
@@ -381,6 +374,24 @@ class RequestResponseView(LoginRequiredMixin, View):
             return JsonResponse({'status':'success'})
         
         return JsonResponse({'status':'success'})
+
+
+class GenerateAgreementPdfView(View):
+
+    def get(self, request, *args, **kwargs):
+        property_request_id = kwargs['property_request_id']
+        property_request = get_object_or_404(
+            PropertyRequestResponse, pk=property_request_id
+        )
+        request_response = PropertyRequestResponse.objects.filter(
+            request_token=property_request.request_token
+        ).last()
+
+        context = {'property_request':property_request,'request_response':request_response, }
+        pdf = generate_pdf(request, 'property/generate_agreement_pdf.html',context)
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="test.pdf"'
+        return response
 
 
 class UpdateRequestResponseView(LoginRequiredMixin, UpdateView):

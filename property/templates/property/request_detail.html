@@ -14,7 +14,7 @@
                 <h5>Owner Response Rent amount :- {{request_response.rent_amount}}</h5>
                 <h5>Owner Response Start date :- {{request_response.start_date}}</h5>
                 <h5>Owner Response End date :- {{request_response.end_date}}</h5>
-                <h5>Owner Response Agreement :- <a href="/media/{{property_request.propertyrequestresponse.document}}" target="_blank">owner aggrement</a></h5>
+                <h5>Owner Response Agreement :- <a href="{% url 'agreement_pdf' property_request.id %}" target="_blank">owner aggrement</a></h5>
             </div>
             {% if request.user.user_type == "renter" %}
                 <div style='border:2px solid blue;margin-top:80px;padding:20px;border-radius:25px;margin-left:50px'>
