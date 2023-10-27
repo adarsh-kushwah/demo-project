@@ -1,5 +1,6 @@
 from django.db import models
 from property.models import Booking, UserProfile
+
 # Create your models here.
 
 class Bill(models.Model):
@@ -36,16 +37,21 @@ class Bill(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def paid_amount(self):
+        paid_amount = Payment.objects.filter(bill=self,status='success').aggregate(models.Sum('amount'))
+        paid_amount = paid_amount['amount__sum'] if paid_amount['amount__sum'] != None else 0 
+        return paid_amount
+
 
 class Payment(models.Model):
     """
     stores payment by renter for a booking
     """
-
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
     user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     amount = models.PositiveIntegerField()
     source = models.CharField(max_length=20)
-    status = models.CharField(max_length=10)
+    status = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,6 +1,6 @@
 from django import forms
 
-from payment.models import Bill
+from payment.models import Bill, Payment
 
 
 class BillModelForm(forms.ModelForm):
@@ -19,3 +19,10 @@ class BillModelForm(forms.ModelForm):
             "document": forms.HiddenInput(),
             "due_date": forms.widgets.DateInput(attrs={"type": "date"}),
         }
+
+
+class PaymentForm(forms.ModelForm):
+    class Meta:
+        model = Payment
+        fields = ['amount']
+        

@@ -1,0 +1,14 @@
+{% extends "user/base.html" %}
+{% load static %}
+
+{% block bill %}
+    <li><a class="nav-link scrollto active" href="{% url 'all_bills' %}">Bills</a></li>
+    {% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/booking_bills.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h2>Your payment of {{paying_amount}} is successful.</h2>
+{% endblock %}

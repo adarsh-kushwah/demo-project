@@ -1,0 +1,12 @@
+
+.main, .payment_div{
+    display: flex;
+    justify-content: center;
+    margin:15px;
+}
+
+.payment_div{
+    width: 50%;
+    border: 2px solid blueviolet;
+    margin-top: 50px;
+}

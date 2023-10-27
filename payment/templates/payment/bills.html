@@ -1,5 +1,6 @@
 {% extends "user/base.html" %}
 {% load static %}
+{% load mathfilters %}
 {% block bill %}
     <li><a class="nav-link scrollto active" href="{% url 'all_bills' %}">Bills</a></li>
     {% endblock %}
@@ -9,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-    <div>
+    <div class='main'>
         <table class="table table-bordered">
             <thead>
               <tr>
@@ -23,6 +24,8 @@
                 <th scope="col">Year</th>
                 <th scope="col">Month</th>
                 <th scope="col">Amount</th>
+                <th scope="col">Paid Amount</th>
+                <th scope="col">Remaining Amount</th>
                 <th scope="col">Status</th>
                 <th scope="col">Bill</th>
               </tr>
@@ -46,7 +49,15 @@
                             <td>{{bill.year}}</td>
                             <td>{{bill.month}}</td>
                             <td>{{bill.amount}}</td>
-                            <td>{{bill.status}}</td>
+                            <td>{{bill.paid_amount|default:0}}</td>
+                            <td>{{ bill.amount|sub:bill.paid_amount|default:bill.amount }}
+                                {% if bill.status != 'paid' %}
+                                    <a href="/payment/pay-bill/{{bill.id}}/">(Paynow)</a>
+                                {% endif %}
+                            </td>
+                            <td>{{bill.status}}
+                                
+                            </td>
                             <td>
                                 <a href="{{bill.document.url}}" target="_blank">bill</a>
                             </td>

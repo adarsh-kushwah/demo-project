@@ -12,10 +12,12 @@ from django.db.models import Q, F, Sum
 
 from django.utils import timezone
 
-from payment.models import Bill
-from payment.forms import BillModelForm
+from payment.models import Bill, Payment
+from payment.forms import BillModelForm, PaymentForm
 from payment.utility import generate_pdf
 from property.models import  Booking, PropertyRequestResponse
+
+from user.models import UserProfile
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.shortcuts import render, redirect
@@ -115,12 +117,26 @@ class TestPayment(View):
 
 
 
+class PayBillView(View):
+    template_name = "payment/pay_bill.html"
+    form_class = PaymentForm
+
+    def get(self, request, *args, **kwargs):
+        
+        bill_id = kwargs['bill_id']
+        bill = Bill.objects.get(id=bill_id)
+        payable_amount = bill.amount - bill.paid_amount
+        initail_data = {'amount':payable_amount}
+        payment_form = self.form_class(initial=initail_data)
+        context = {'payment_form':payment_form, 'stripe_publishable_key' : settings.STRIPE_PUBLISHABLE_KEY, 'bill_id':bill_id}
+        return render(request, self.template_name, context)
+
 
 @csrf_exempt
-def create_checkout_session(request):
+def create_checkout_session(request, bill_id):
 
     request_data = json.loads(request.body)
-
+    paying_amount = int(request_data['paying_amount'])
     stripe.api_key = settings.STRIPE_SECRET_KEY
     checkout_session = stripe.checkout.Session.create(
        
@@ -132,16 +148,35 @@ def create_checkout_session(request):
                     'product_data': {
                     'name': 'test',
                     },
-                    'unit_amount': int(1 * 100),
+                    'unit_amount': int(paying_amount * 100),
                 },
                 'quantity': 1,
             }
         ],
         mode='payment',
         success_url=request.build_absolute_uri(
-            reverse('test')
-        ) + "?session_id={CHECKOUT_SESSION_ID}",
+            reverse('payment_success', args=[bill_id])
+        ) + "?session_id={CHECKOUT_SESSION_ID}&paying_amount="+str(paying_amount),
         cancel_url=request.build_absolute_uri(reverse('test')),
     )
-
     return JsonResponse({'sessionId': checkout_session.id})
+
+
+class PaymentSuccessView(View):
+    template_name = "payment/payment_success.html"
+
+    def get(self, request, *args, **kwargs):
+        bill_id = kwargs['bill_id']
+        paying_amount = int(request.GET.get('paying_amount'))
+
+        bill = Bill.objects.get(id=bill_id)
+        user_id = request.user.id
+        user = UserProfile.objects.get(id=user_id)
+        payable_amount = bill.amount - bill.paid_amount
+        if paying_amount >= payable_amount:
+            status = 'paid'
+        else:
+            status = 'partial_paid'
+        Payment.objects.create(user=user, bill= bill, amount=paying_amount, source='stripe', status=status)
+        context = {'paying_amount':paying_amount}
+        return render(request, self.template_name, context)
