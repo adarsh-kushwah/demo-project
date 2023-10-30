@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
-from user.views import SignupView, ViewProfile
+from user.views import SignupView, ViewProfile, UpdateProfile
 from user.forms import UserProfileModelForm, AddressModelForm
 
 
@@ -14,7 +14,10 @@ urlpatterns = [
         name="login",
     ),
     path("signup/", SignupView.as_view(), name="signup"),
-    path("profile/<int:pk>/", ViewProfile.as_view(), name="profile"),
+    path("profile/<int:user_id>/", ViewProfile.as_view(), name="profile"),
+    path(
+        "update-profile/<int:user_id>/", UpdateProfile.as_view(), name="update_profile"
+    ),
     path(
         "logout/",
         auth_views.LogoutView.as_view(next_page="/user/login/"),

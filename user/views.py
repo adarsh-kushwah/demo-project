@@ -1,9 +1,14 @@
+from typing import Any
 from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.views.generic.edit import UpdateView
+from django.urls import reverse_lazy
+
+from django.forms import DateInput
 
 from user.forms import UserProfileModelForm, AddressModelForm
 from user.models import Location, UserAddress, UserProfile
@@ -58,12 +63,35 @@ class SignupView(LogoutIfAuthenticatedMixin, View):
 class ViewProfile(LoginRequiredMixin, DetailView):
     model = UserProfile
     login_url = "/user/login/"
+    pk_url_kwarg = "user_id"
+
+
+class UpdateProfile(LoginRequiredMixin, UpdateView):
+    pk_url_kwarg = "user_id"
+    model = UserProfile
+    template_name = "user/userprofile_detail.html"
+    fields = [
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "date_of_birth",
+        "gender",
+        "marital_status",
+        "profile_picture",
+        "phone_number",
+        "alternate_phone_number",
+    ]
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields["date_of_birth"].widget = DateInput(attrs={"type": "date"})
+        return form
+
+    def get_success_url(self):
+        return reverse("profile", kwargs={"user_id": self.request.user.id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print("----->")
+        context["update_profile"] = True
         return context
-
-
-class UpdateProfile(LoginRequiredMixin, View):
-    pass

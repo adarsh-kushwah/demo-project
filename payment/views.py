@@ -177,21 +177,19 @@ def create_checkout_session(request, bill_id):
         )
         + "?session_id={CHECKOUT_SESSION_ID}&paying_amount="
         + str(paying_amount),
-        cancel_url=request.build_absolute_uri(
-            reverse("payment_fali")
-        )
-        + "?paying_amount="+ str(paying_amount),
+        cancel_url=request.build_absolute_uri(reverse("payment_fali"))
+        + "?paying_amount="
+        + str(paying_amount),
     )
     return JsonResponse({"sessionId": checkout_session.id})
 
 
 class PaymentSuccessView(View):
-
     def get(self, request, *args, **kwargs):
-        session_id = request.GET.get('session_id')
+        session_id = request.GET.get("session_id")
         if session_id is None:
             return HttpResponseNotFound()
-        
+
         stripe.api_key = settings.STRIPE_SECRET_KEY
         session = stripe.checkout.Session.retrieve(session_id)
         payment_intent = session.payment_intent

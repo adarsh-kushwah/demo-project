@@ -85,12 +85,12 @@
                                 <img class="dropdown rounded-circle shadow-4-strong {% if request.user.user_type == "owner" %} owner_profile_pic {% else %} renter_profile_pic {% endif %}" alt="not available" src="{% if user.profile_picture %} {{user.profile_picture.url}} {% else %} {% static 'img/avatar.png' %} {% endif %}" /> <i class="bi bi-chevron-down"></i>
                                 <ul>
                                     <li style='padding:5px'>
-                                        <a href="{% url 'profile' pk=request.user.id %}">
+                                        <a href="{% url 'profile' user_id=request.user.id %}">
                                             View Profile ({{request.user.username}})
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#">Update Profile</a>
+                                        <a href="{% url 'update_profile' user_id=request.user.id %}">Update Profile</a>
                                     </li>
                                     <li>
                                         <a href="{% url 'change_password' %}">Change Password</a>

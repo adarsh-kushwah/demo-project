@@ -398,7 +398,6 @@ class RequestResponseView(LoginRequiredMixin, View):
 
 
 class GenerateAgreementPdfView(View):
-    
     def get(self, request, *args, **kwargs):
         property_request_id = kwargs["property_request_id"]
         property_request = get_object_or_404(
@@ -422,6 +421,7 @@ class UpdateRequestResponseView(LoginRequiredMixin, UpdateView):
     """
     Owner can update the renter's request response
     """
+
     login_url = "/user/login/"
     model = PropertyRequestResponse
     fields = ["rent_amount", "start_date", "end_date"]
@@ -434,6 +434,7 @@ class ConfirmBookingView(LoginRequiredMixin, View):
     """
     Renter confirm the booking after owner's response on request
     """
+
     login_url = "/user/login/"
 
     def post(self, request, *args, **kwargs):
@@ -499,7 +500,6 @@ class BookingList(LoginRequiredMixin, ListView):
 
 
 class LeaveProperty(LoginRequiredMixin, View):
-
     def get(self, request, *args, **kwargs):
         property = get_object_or_404(Property, pk=kwargs["pk"])
         PropertyRequestResponse.objects.filter(property=property).update(status="left")

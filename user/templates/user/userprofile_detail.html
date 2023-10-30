@@ -18,7 +18,7 @@
         <img class="dropdown rounded-circle shadow-4-strong view_user_profile" alt="not available" src="{% if user.profile_picture %} {{user.profile_picture.url}} {% else %} {% static 'img/avatar.png' %} {% endif %}" />
         <div class='user_detail_div' style="">
         <h4>Username: {{ userprofile.username }}</h4>
-        <h4>Name: {{ user.name|default:"not available" }}</h4>
+        <h4>Name: {{ user.get_full_name|default:"not available" }}</h4>
         <h4>Address: {{ userprofile.useraddress.full_address|default:"not available" }}</h4>
         <h4>Date of Birth: {{ userprofile.date_of_birth|default:"not available" }}</h4>
         <h4>Gender: {{ userprofile.gender }}</h4>
@@ -26,5 +26,14 @@
         <h4>Contact Number: {{ userprofile.phone_number }}</h4>
         <h4>Alternate Phone Number: {{ userprofile.alternate_phone_number|default:"not available" }}</h4>
         </div>
+        {% if update_profile %}
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <input type="submit" value="update">
+                </form>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
