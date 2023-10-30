@@ -12,9 +12,11 @@
             {% csrf_token %}
             {{address_form.as_p}}
             {{profile_form.as_p}}
+            
             <!-- Submit button -->
             <button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
         </form>
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="{% static 'js/signup.js' %}"></script>
 {% endblock %}

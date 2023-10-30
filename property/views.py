@@ -24,6 +24,7 @@ from property.models import (
     Property,
     Agreement,
     PropertyRequestResponse,
+    Amenity
 )
 from property.forms import (
     PropertyForm,
@@ -32,6 +33,7 @@ from property.forms import (
     RequestPropertyModelForm,
     PropertyRequestResponseForm,
     AgreementModelForm,
+    AmenityModelForm,
 )
 
 from rating.models import PropertyRating, RenterRating
@@ -99,6 +101,7 @@ class Home(View):
             context["property_type"] = property_type
         return render(request, self.template_name, context)
 
+from django.forms import modelformset_factory 
 
 class PostPropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
@@ -113,6 +116,7 @@ class PostPropertyView(LoginRequiredMixin, View):
             "property_form": property_form,
             "address_form": AddressModelForm(),
             "proprty_image_form": ProprtyImageModelForm(),
+            "amenity_form" : modelformset_factory(Amenity, fields =["name", "status"], extra = 1) 
         }
         return render(request, "property/post_property.html", context_data)
 

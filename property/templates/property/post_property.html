@@ -1,7 +1,16 @@
 {% extends "user/base.html" %}
+{% load static %}
 {% block post_property_nav %}
         <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
-    {% endblock %}
+{% endblock %}
+
+{% block js %}
+    {{block.super}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+    <script src="{% static 'js/post_property.js' %}"></script>
+{% endblock %}
+
 {% block content %}
     {% block post_property %}
         <h1 style="align-self: center;">
@@ -12,7 +21,30 @@
             {{property_form.as_p}}
             {{proprty_image_form.as_p}}
             {{address_form.as_p}}
+            <div>
+                Amenity
+                {{ amenity_form.management_form }}
+                
+                {{ amenity_form.as_p }}
+                <div id="newinput"></div>
+                <button id="rowAdder" type="button" class="btn btn-dark">
+                    <span class="bi bi-plus-square-dotted">
+                    </span> ADD
+                </button>
+
+            </div>
             <input type="submit" value="Post">
         </form>
+        <form class="repeater">
+            <label>Tasks:</label><br>
+              <div data-repeater-list="tasks">
+                <div data-repeater-item>
+                  <input type="text" name="item" placeholder="Type your task...." />
+                  <button type="button" data-repeater-delete>Delete</button>
+                  <button type="button" data-repeater-create>Add</button>
+                </div>
+              </div>
+          </form>
+
     {% endblock %}
 {% endblock %}

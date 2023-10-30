@@ -8,6 +8,7 @@ from property.models import (
     PropertyImage,
     Agreement,
     PropertyRequestResponse,
+    Amenity
 )
 
 
@@ -22,6 +23,7 @@ class PropertyForm(forms.ModelForm):
 
 
 class ProprtyImageModelForm(forms.ModelForm):
+
     class Meta:
         model = PropertyImage
         fields = ["image"]
@@ -42,6 +44,13 @@ class AddressModelForm(forms.ModelForm):
             return location.first()
         else:
             raise ValidationError("Pincode does not exists.")
+
+
+class AmenityModelForm(forms.ModelForm):
+    
+    class Meta:
+        model = Amenity
+        fields = ["name", "status"]
 
 
 class RequestPropertyModelForm(forms.ModelForm):
