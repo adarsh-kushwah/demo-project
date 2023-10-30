@@ -4,10 +4,9 @@ from payment.models import Bill, Payment
 
 
 class BillModelForm(forms.ModelForm):
-    
     def __init__(self, *args, **kwargs):
         super(BillModelForm, self).__init__(*args, **kwargs)
-        self.fields['document'].required = False
+        self.fields["document"].required = False
 
     class Meta:
         model = Bill
@@ -24,5 +23,4 @@ class BillModelForm(forms.ModelForm):
 class PaymentForm(forms.ModelForm):
     class Meta:
         model = Payment
-        fields = ['amount']
-        
+        fields = ["amount"]

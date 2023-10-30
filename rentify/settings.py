@@ -121,8 +121,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-#TIME_ZONE = "UTC"
-TIME_ZONE =  'Asia/Kolkata'
+# TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
@@ -130,7 +130,6 @@ USE_TZ = False
 
 
 USE_L10N = True
-
 
 
 # Static files (CSS, JavaScript, Images)
@@ -149,7 +148,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join("media")
 
 if DEBUG:
-    STRIPE_PUBLISHABLE_KEY = 'pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff'
-    STRIPE_SECRET_KEY = 'sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1'
-#pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff
-#sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1
+    STRIPE_PUBLISHABLE_KEY = "pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff"
+    STRIPE_SECRET_KEY = "sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1"
+# pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff
+# sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1

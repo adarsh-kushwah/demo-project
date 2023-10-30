@@ -83,7 +83,9 @@ class PropertyRequestResponse(models.Model):
     )
     request_token = models.CharField(default=uuid.uuid4, max_length=36)
     user = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
-    request_response_property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True)
+    request_response_property = models.ForeignKey(
+        Property, on_delete=models.SET_NULL, null=True
+    )
     rent_amount = models.PositiveIntegerField(null=True)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
@@ -91,11 +93,18 @@ class PropertyRequestResponse(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ("request_token", "user", "request_response_property", "created_at")
+        unique_together = (
+            "request_token",
+            "user",
+            "request_response_property",
+            "created_at",
+        )
 
     @property
     def renter(self):
-        return PropertyRequestResponse.objects.get(user__user_type='renter',request_token=self.request_token).user
+        return PropertyRequestResponse.objects.get(
+            user__user_type="renter", request_token=self.request_token
+        ).user
 
 
 class Booking(models.Model):
@@ -112,8 +121,11 @@ class Booking(models.Model):
     @property
     def renter(self):
         request_token = self.property_request_response.request_token
-        property_request_response = PropertyRequestResponse.objects.get(request_token = request_token, user__user_type='renter')
+        property_request_response = PropertyRequestResponse.objects.get(
+            request_token=request_token, user__user_type="renter"
+        )
         return property_request_response.user
+
 
 class Agreement(models.Model):
     """
@@ -124,4 +136,3 @@ class Agreement(models.Model):
     document = models.FileField(upload_to="aggrement/renter")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-

@@ -13,8 +13,8 @@ class LocationAdmin(admin.ModelAdmin):
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ["name"]
     search_fields = ["name"]
-    list_filter = ['name','property_type']
-    ordering = ['name', 'is_available']
+    list_filter = ["name", "property_type"]
+    ordering = ["name", "is_available"]
 
 
 @admin.register(PropertyImage)

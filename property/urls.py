@@ -11,7 +11,7 @@ from property.views import (
     LeaveProperty,
     UpdateRequestResponseView,
     ConfirmBookingView,
-    GenerateAgreementPdfView
+    GenerateAgreementPdfView,
 )
 
 
@@ -21,7 +21,11 @@ urlpatterns = [
     path("update/<int:pk>/", UpdatePropertyView.as_view(), name="update_property"),
     path("detail/<int:pk>/", PropertyDetailView.as_view(), name="property_detail"),
     path("requests/", PropertyRequestList.as_view(), name="property_requests"),
-    path("request-response/<int:pk>/", RequestResponseView.as_view(), name="request_response"),
+    path(
+        "request-response/<int:pk>/",
+        RequestResponseView.as_view(),
+        name="request_response",
+    ),
     path("bookings/", BookingList.as_view(), name="bookings"),
     path("update-request/<int:pk>/", UpdateRequest.as_view(), name="update_view"),
     path("leave/<int:pk>/", LeaveProperty.as_view(), name="leave_property"),
@@ -35,5 +39,9 @@ urlpatterns = [
         ConfirmBookingView.as_view(),
         name="confirm_booking",
     ),
-    path("generate-agreement-pdf/<int:property_request_id>/", GenerateAgreementPdfView.as_view(), name="agreement_pdf"),
+    path(
+        "generate-agreement-pdf/<int:property_request_id>/",
+        GenerateAgreementPdfView.as_view(),
+        name="agreement_pdf",
+    ),
 ]

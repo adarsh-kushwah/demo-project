@@ -1,5 +1,8 @@
 {% extends "user/base.html" %}
 {% load static %}
+{% block request %}
+    <li><a class="nav-link scrollto active" href="{% url 'property_requests' %}">Requests</a></li>
+{% endblock %}
 {% block content %}
     <div style="display: flex;justify-content: center;align-items: center;">
         {% if property_request.properyt.is_available == False %}

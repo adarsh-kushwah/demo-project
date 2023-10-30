@@ -40,6 +40,7 @@ from rating.forms import PropertyReviewModelForm, RenterReviewModelForm
 
 from payment.utility import generate_pdf
 
+
 class Home(View):
     template_name = "property/home.html"
 
@@ -59,33 +60,43 @@ class Home(View):
             user = UserProfile.objects.get(username=request.user.username)
             context["user"] = user
             if user.user_type == "owner":
-                context["property"] = user.property_set.all().annotate(rating=Avg('propertyrating__rating'))
+                context["property"] = user.property_set.all().annotate(
+                    rating=Avg("propertyrating__rating")
+                )
             else:
-                context["property"] = Property.objects.filter(is_available=True).annotate(rating=Avg('propertyrating__rating'))
+                context["property"] = Property.objects.filter(
+                    is_available=True
+                ).annotate(rating=Avg("propertyrating__rating"))
         else:
-            context["property"] = Property.objects.filter(is_available=True).annotate(rating=Avg('propertyrating__rating'))
-
-        if 'search' in request.GET:
-            value = request.GET.get('search')
-            context["property"] = context["property"].filter(
-                Q(name__icontains=value)|
-                Q(propertyaddress__street_address__icontains=value)|
-                Q(propertyaddress__location__city__icontains=value)
+            context["property"] = Property.objects.filter(is_available=True).annotate(
+                rating=Avg("propertyrating__rating")
             )
-            context['search'] = value
 
-        if 'min_price' and 'max_price' in request.GET:
-            min_price = request.GET.get('min_price')
-            max_price = request.GET.get('max_price')
-            context["property"] = context["property"].filter(rent_amount__range=[min_price, max_price])
-            context['min_price'] = min_price
-            context['max_price'] = max_price
-        
-        if 'property_type' in request.GET:
-            property_type = request.GET.get('property_type')
-            if property_type != 'all':
-                context["property"] = context["property"].filter(property_type__exact=property_type)
-            context['property_type'] = property_type
+        if "search" in request.GET:
+            value = request.GET.get("search")
+            context["property"] = context["property"].filter(
+                Q(name__icontains=value)
+                | Q(propertyaddress__street_address__icontains=value)
+                | Q(propertyaddress__location__city__icontains=value)
+            )
+            context["search"] = value
+
+        if "min_price" and "max_price" in request.GET:
+            min_price = request.GET.get("min_price")
+            max_price = request.GET.get("max_price")
+            context["property"] = context["property"].filter(
+                rent_amount__range=[min_price, max_price]
+            )
+            context["min_price"] = min_price
+            context["max_price"] = max_price
+
+        if "property_type" in request.GET:
+            property_type = request.GET.get("property_type")
+            if property_type != "all":
+                context["property"] = context["property"].filter(
+                    property_type__exact=property_type
+                )
+            context["property_type"] = property_type
         return render(request, self.template_name, context)
 
 
@@ -138,14 +149,16 @@ class PostPropertyView(LoginRequiredMixin, View):
 
 class UpdatePropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
-    template_name = "property/update_property.html" 
-    
+    template_name = "property/update_property.html"
+
     def get(self, request, *args, **kwargs):
         property_id = kwargs["pk"]
         property = get_object_or_404(Property, pk=property_id)
         user_id = request.user.id
         if property.owner.id != user_id:
-            return HttpResponseForbidden("You don't have access to update other's property. ")
+            return HttpResponseForbidden(
+                "You don't have access to update other's property. "
+            )
         postal_code = property.propertyaddress.location.postal_code
         context_data = {
             "property": property,
@@ -207,6 +220,7 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
 
         POST :- Renter can send request for selected property
     """
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         property = context["property"]
@@ -242,8 +256,8 @@ class UpdateRequest(LoginRequiredMixin, UpdateView):
     """
 
     def get_success_url(self):
-        return reverse_lazy('property_requests')
-    
+        return reverse_lazy("property_requests")
+
     def get_form_class(self):
         form_class = super().get_form_class()
         form_class.base_fields["start_date"].widget = forms.widgets.DateInput(
@@ -255,7 +269,7 @@ class UpdateRequest(LoginRequiredMixin, UpdateView):
         return form_class
 
     def post(self, request, *args, **kwargs):
-        request_type = request.GET.get('request_type',None)
+        request_type = request.GET.get("request_type", None)
 
         if request_type == "resend_request":
             property_request = get_object_or_404(
@@ -266,6 +280,7 @@ class UpdateRequest(LoginRequiredMixin, UpdateView):
 
         return super(UpdateRequest, self).post(request, **kwargs)
 
+
 class PropertyRequestList(LoginRequiredMixin, ListView):
     login_url = "/user/login/"
     model = PropertyRequestResponse
@@ -273,19 +288,20 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
     """
         Showing all Renter's Requests for Property to owner 
     """
+
     def get_queryset(self):
         user_id = self.request.user.id
-    
+
         if self.request.user.user_type == "owner":
             queryset = self.model.objects.filter(
                 Q(status="processing") | Q(status="responsed"),
-               request_response_property__owner__id = user_id,
-               user__user_type = 'renter',
-            ).annotate(rating = Avg('request_response_property__renterrating__rating')
-                       )
+                request_response_property__owner__id=user_id,
+                user__user_type="renter",
+            ).annotate(rating=Avg("request_response_property__renterrating__rating"))
         else:
             queryset = self.model.objects.filter(
-                Q(status="processing") | Q(status="responsed") | Q(status="rejected"), user_id=user_id
+                Q(status="processing") | Q(status="responsed") | Q(status="rejected"),
+                user_id=user_id,
             ).distinct("request_response_property")
         return queryset
 
@@ -302,9 +318,8 @@ class RequestResponseView(LoginRequiredMixin, View):
     """
 
     def get(self, request, *args, **kwargs):
-
         property_request_id = kwargs["pk"]
-        
+
         property_request = get_object_or_404(
             PropertyRequestResponse, pk=property_request_id
         )
@@ -353,7 +368,9 @@ class RequestResponseView(LoginRequiredMixin, View):
             request_token = property_request_response_form.cleaned_data["request_token"]
             property_request_response_form.instance.user = user
             property_request_response_form.instance.property_request = property_request
-            property_request_response_form.instance.request_response_property = property_request.request_response_property
+            property_request_response_form.instance.request_response_property = (
+                property_request.request_response_property
+            )
             property_request_response_form.save()
             PropertyRequestResponse.objects.filter(request_token=request_token).update(
                 status="responsed"
@@ -364,22 +381,26 @@ class RequestResponseView(LoginRequiredMixin, View):
         property_request_id = kwargs["pk"]
         property_request = get_object_or_404(
             PropertyRequestResponse, pk=property_request_id
-        ) 
+        )
         reject_request = request.GET.get("reject_request", None)
         if reject_request:
             if reject_request == "owner":
-                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).update(status="rejected")
+                PropertyRequestResponse.objects.filter(
+                    request_token=property_request.request_token
+                ).update(status="rejected")
             else:
-                PropertyRequestResponse.objects.filter(request_token=property_request.request_token).delete()
-            return JsonResponse({'status':'success'})
-        
-        return JsonResponse({'status':'success'})
+                PropertyRequestResponse.objects.filter(
+                    request_token=property_request.request_token
+                ).delete()
+            return JsonResponse({"status": "success"})
+
+        return JsonResponse({"status": "success"})
 
 
 class GenerateAgreementPdfView(View):
-
+    
     def get(self, request, *args, **kwargs):
-        property_request_id = kwargs['property_request_id']
+        property_request_id = kwargs["property_request_id"]
         property_request = get_object_or_404(
             PropertyRequestResponse, pk=property_request_id
         )
@@ -387,32 +408,32 @@ class GenerateAgreementPdfView(View):
             request_token=property_request.request_token
         ).last()
 
-        context = {'property_request':property_request,'request_response':request_response, }
-        pdf = generate_pdf(request, 'property/generate_agreement_pdf.html',context)
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'filename="test.pdf"'
+        context = {
+            "property_request": property_request,
+            "request_response": request_response,
+        }
+        pdf = generate_pdf(request, "property/generate_agreement_pdf.html", context)
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = 'filename="rental-agreement.pdf"'
         return response
 
 
 class UpdateRequestResponseView(LoginRequiredMixin, UpdateView):
-
     """
     Owner can update the renter's request response
     """
-
     login_url = "/user/login/"
     model = PropertyRequestResponse
     fields = ["rent_amount", "start_date", "end_date"]
 
     def get_success_url(self):
-        return reverse_lazy('property_requests')
+        return reverse_lazy("property_requests")
 
 
 class ConfirmBookingView(LoginRequiredMixin, View):
     """
     Renter confirm the booking after owner's response on request
     """
-
     login_url = "/user/login/"
 
     def post(self, request, *args, **kwargs):
@@ -447,12 +468,12 @@ class BookingList(LoginRequiredMixin, ListView):
         user_id = self.request.user.id
 
         quertset = self.model.objects.filter(
-            property_request_response__request_token__in=
-                Subquery(PropertyRequestResponse. objects.filter(
-                    user__id = user_id,
-                    status='approved'
-                ).values('request_token')),
-            ).order_by('created_at')
+            property_request_response__request_token__in=Subquery(
+                PropertyRequestResponse.objects.filter(
+                    user__id=user_id, status="approved"
+                ).values("request_token")
+            ),
+        ).order_by("created_at")
 
         return quertset
 
@@ -461,12 +482,13 @@ class BookingList(LoginRequiredMixin, ListView):
         user_id = self.request.user.id
 
         context["booking_history_list"] = self.model.objects.filter(
-            property_request_response__request_token__in=
-                Subquery(PropertyRequestResponse.objects.filter(
-                    user__id = user_id,
-                    status = 'left',
-                ).values('request_token')),
-            ).order_by('created_at')
+            property_request_response__request_token__in=Subquery(
+                PropertyRequestResponse.objects.filter(
+                    user__id=user_id,
+                    status="left",
+                ).values("request_token")
+            ),
+        ).order_by("created_at")
         context["property_review_form"] = PropertyReviewModelForm()
         context["renter_review_form"] = RenterReviewModelForm()
 
@@ -477,11 +499,10 @@ class BookingList(LoginRequiredMixin, ListView):
 
 
 class LeaveProperty(LoginRequiredMixin, View):
+
     def get(self, request, *args, **kwargs):
-        user = UserProfile.objects.get(username=request.user.username)
-        property_id = kwargs["pk"]
         property = get_object_or_404(Property, pk=kwargs["pk"])
-        PropertyRequestResponse.objects.filter(property = property).update(status = 'left')
+        PropertyRequestResponse.objects.filter(property=property).update(status="left")
         property.is_available = True
         property.save()
         return redirect(reverse("home"))
