@@ -1,5 +1,18 @@
-{% extends "property/post_property.html" %}
-{% block post_property %}
+{% extends "user/base.html"%}
+{% load static %}
+
+{% block js %}
+    {{block.super}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+    <script src="{% static 'js/post_property.js' %}"></script>
+{% endblock %}
+
+{% block post_property_nav %}
+        <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
+{% endblock %}
+
+{% block content %}
     <div style="border: 1px solid blue;display : flex;flex-direction : row;padding: 5px;">
         <div style="border: 2px solid yellow;width: 50%;padding:20px 20px 80px 20px;">
             <h1 style="align-self: center;">
@@ -18,7 +31,8 @@
                 {% endfor %}
         </div>
         <div style="border: 2px solid red;width: 50%;padding: 5px;">
-            <form action="{% if message %}{% url 'update_property' pk=property.id %}"{% endif %}" method="post" >
+            <form action="{% if message %}{% url 'update_property' pk=property.id %}{% endif %}" method="post"  >
+
                 <h1 style="align-self: center;">
                     Update Property
                 </h1>
@@ -26,6 +40,28 @@
                 {{property_form.as_p}}
                 
                 {{address_form.as_p}}
+            
+                <div>
+                    <h5>Amenity</h5>
+                    {{amenity_form.management_form}}
+                    <ui id="newinput">
+                        {% for form in amenity_form %}
+                            <div class="added_row">
+                                {{ form }}
+                            </div>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+                <br>
+                <button class="DeleteRow" type="button" >delete</button>
+
+                <button id="rowAdder" type="button" class="btn btn-dark">
+                    <span class="bi bi-plus-square-dotted">
+                    </span> Add More Amenity
+                </button>
+                
+                <br><br>
                 <input type="submit" value="Update">
             </form>
         </div>

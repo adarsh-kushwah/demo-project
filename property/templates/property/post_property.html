@@ -22,29 +22,20 @@
             {{proprty_image_form.as_p}}
             {{address_form.as_p}}
             <div>
-                Amenity
-                {{ amenity_form.management_form }}
-                
-                {{ amenity_form.as_p }}
-                <div id="newinput"></div>
-                <button id="rowAdder" type="button" class="btn btn-dark">
-                    <span class="bi bi-plus-square-dotted">
-                    </span> ADD
-                </button>
-
+                <h5>Amenity</h5>
+                <ui id="newinput">
+                    {{ amenity_form }}
+                </ul>
             </div>
+            <br>
+            <button class="DeleteRow" type="button" >delete</button>
+            <button id="rowAdder" type="button" class="btn btn-dark">
+                <span class="bi bi-plus-square-dotted">
+                </span> Add More Amenity
+            </button>
+            <br><br>
             <input type="submit" value="Post">
         </form>
-        <form class="repeater">
-            <label>Tasks:</label><br>
-              <div data-repeater-list="tasks">
-                <div data-repeater-item>
-                  <input type="text" name="item" placeholder="Type your task...." />
-                  <button type="button" data-repeater-delete>Delete</button>
-                  <button type="button" data-repeater-create>Add</button>
-                </div>
-              </div>
-          </form>
-
+        
     {% endblock %}
 {% endblock %}

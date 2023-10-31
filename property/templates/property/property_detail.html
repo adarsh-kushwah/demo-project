@@ -15,6 +15,14 @@
             <h3>Rent amount : {{property.rent_amount}}</h3>
             <h3>Owner name : {{property.owner.get_full_name|default:"Not available"}}</h3>
             <h3>Contact number : {{ property.owner.phone_number}}</h3>
+            <h3>Amenity :
+                {% for amenity in property.amenity_set.all %}
+                    {{amenity.name}} - {{amenity.status}},
+                {% empty %}
+                    Not added by owner
+                {% endfor %}
+            <h3>
+
         </div>
     </div>
     <div style="border: 2px solid rgb(177, 174, 186);padding: 15px;">
