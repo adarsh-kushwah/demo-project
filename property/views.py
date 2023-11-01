@@ -16,7 +16,7 @@ from django.urls import reverse_lazy
 from django.db.models import Avg
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse, QueryDict
-from django.forms import modelformset_factory 
+from django.forms import modelformset_factory
 
 from user.models import UserProfile
 
@@ -26,7 +26,7 @@ from property.models import (
     Property,
     Agreement,
     PropertyRequestResponse,
-    Amenity
+    Amenity,
 )
 from property.forms import (
     PropertyForm,
@@ -106,7 +106,7 @@ class Home(View):
 
 class PostPropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
-    amenity_model_formset =  modelformset_factory(Amenity, fields =["name", "status"])
+    amenity_model_formset = modelformset_factory(Amenity, fields=["name", "status"])
     """
         Owner can Post new property
     """
@@ -117,7 +117,7 @@ class PostPropertyView(LoginRequiredMixin, View):
             "property_form": property_form,
             "address_form": AddressModelForm(),
             "proprty_image_form": ProprtyImageModelForm(),
-            "amenity_form" : self.amenity_model_formset(queryset=Amenity.objects.none())
+            "amenity_form": self.amenity_model_formset(queryset=Amenity.objects.none()),
         }
         return render(request, "property/post_property.html", context_data)
 
@@ -126,7 +126,7 @@ class PostPropertyView(LoginRequiredMixin, View):
         address_form = AddressModelForm(request.POST)
         proprty_image_form_set = ProprtyImageModelForm(request.POST, request.FILES)
         amenity_form_set = self.amenity_model_formset(request.POST)
-        
+
         if (
             address_form.is_valid()
             and property_form.is_valid()
@@ -138,20 +138,20 @@ class PostPropertyView(LoginRequiredMixin, View):
             address_form.instance.location = location
             address_form.instance.property = property
             address_form.save()
-            image_files = request.FILES.getlist('image')
+            image_files = request.FILES.getlist("image")
 
             for img in image_files:
                 """
                 storing multiple images of property
                 """
-                PropertyImage.objects.create(property=property,image=img)
+                PropertyImage.objects.create(property=property, image=img)
 
             for form in amenity_form_set:
                 if form.is_valid():
                     form.instance.property = property
                     form.save()
                 else:
-                    print('not valid',form.errors)
+                    print("not valid", form.errors)
 
             return redirect(reverse("home"))
         else:
@@ -165,7 +165,7 @@ class PostPropertyView(LoginRequiredMixin, View):
             "property_form": property_form,
             "address_form": address_form,
             "proprty_image_form": proprty_image_form_set,
-            "amenity_form" : amenity_form_set,
+            "amenity_form": amenity_form_set,
         }
         return render(request, "property/post_property.html", context_data)
 
@@ -173,7 +173,9 @@ class PostPropertyView(LoginRequiredMixin, View):
 class UpdatePropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
     template_name = "property/update_property.html"
-    amenity_model_formset =  modelformset_factory(Amenity, fields =["name", "status"],extra=0)
+    amenity_model_formset = modelformset_factory(
+        Amenity, fields=["name", "status"], extra=0
+    )
 
     def get(self, request, *args, **kwargs):
         property_id = kwargs["pk"]
@@ -191,48 +193,59 @@ class UpdatePropertyView(LoginRequiredMixin, View):
                 instance=property.propertyaddress, initial={"postal_code": postal_code}
             ),
             "proprty_image_form": ProprtyImageModelForm(),
-            "amenity_form" : self.amenity_model_formset(queryset=Amenity.objects.filter(property=property))
+            "amenity_form": self.amenity_model_formset(
+                queryset=Amenity.objects.filter(property=property)
+            ),
         }
         return render(request, self.template_name, context_data)
 
     def post(self, request, *args, **kwargs):
-    
         property_id = kwargs["pk"]
         property = get_object_or_404(Property, pk=property_id)
-        proprty_image_form = ProprtyImageModelForm(
-            request.POST, request.FILES)
+        proprty_image_form = ProprtyImageModelForm(request.POST, request.FILES)
         property_form = PropertyForm(request.POST, instance=property)
         address_form = AddressModelForm(request.POST, instance=property.propertyaddress)
-        amenity_form_set = self.amenity_model_formset(request.POST, queryset=Amenity.objects.filter(property=property) )
-        
+        amenity_form_set = self.amenity_model_formset(
+            request.POST, queryset=Amenity.objects.filter(property=property)
+        )
+
         if "updateImage" in request.POST:
             if proprty_image_form.is_valid():
-                image_files = request.FILES.getlist('image')
+                image_files = request.FILES.getlist("image")
 
                 for img in image_files:
                     """
                     storing multiple images of property
                     """
-                    PropertyImage.objects.create(property=property,image=img)
+                    PropertyImage.objects.create(property=property, image=img)
                 return redirect(reverse("home"))
 
         else:
-            if address_form.is_valid() and property_form.is_valid() and amenity_form_set.is_valid():
+            if (
+                address_form.is_valid()
+                and property_form.is_valid()
+                and amenity_form_set.is_valid()
+            ):
                 property_form.save()
                 address_form.instance.location = address_form.cleaned_data[
                     "postal_code"
                 ]
                 address_form.save()
-                
+
                 for form in amenity_form_set:
                     if form.is_valid():
                         form.instance.property = property
                         form.save()
                     else:
-                        print('not valid',form.errors)
+                        print("not valid", form.errors)
                 return redirect(reverse("home"))
             else:
-                print("eerroe", property_form.errors, address_form.errors, amenity_form_set.errors)
+                print(
+                    "eerroe",
+                    property_form.errors,
+                    address_form.errors,
+                    amenity_form_set.errors,
+                )
 
         postal_code = property.propertyaddress.location.postal_code
         context_data = {
@@ -246,7 +259,7 @@ class UpdatePropertyView(LoginRequiredMixin, View):
 
     def delete(self, request, *args, **kwargs):
         data = QueryDict(request.body)
-        request_type = data.get('request_type',None)
+        request_type = data.get("request_type", None)
         if request_type == "delete_property_image":
             image_id = kwargs["pk"]
             property_image = PropertyImage.objects.get(id=image_id)

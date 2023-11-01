@@ -8,7 +8,7 @@ from property.models import (
     PropertyImage,
     Agreement,
     PropertyRequestResponse,
-    Amenity
+    Amenity,
 )
 
 
@@ -26,9 +26,7 @@ class ProprtyImageModelForm(forms.ModelForm):
     class Meta:
         model = PropertyImage
         fields = ["image"]
-        widgets = {
-            'image':forms.FileInput(attrs={'id': 'image_input'})
-        }        
+        widgets = {"image": forms.FileInput(attrs={"id": "image_input"})}
 
 
 class AddressModelForm(forms.ModelForm):
@@ -49,7 +47,6 @@ class AddressModelForm(forms.ModelForm):
 
 
 class AmenityModelForm(forms.ModelForm):
-    
     class Meta:
         model = Amenity
         fields = ["name", "status"]
