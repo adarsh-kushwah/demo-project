@@ -17,6 +17,7 @@ from django.db.models import Avg
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse, QueryDict
 from django.forms import modelformset_factory
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from user.models import UserProfile
 
@@ -60,6 +61,7 @@ class Home(View):
 
     def get(self, request, *args, **kwargs):
         context = {}
+        
         if not request.user.is_anonymous:
             user = UserProfile.objects.get(username=request.user.username)
             context["user"] = user
@@ -101,6 +103,12 @@ class Home(View):
                     property_type__exact=property_type
                 )
             context["property_type"] = property_type
+
+        paginated_list = Paginator(context["property"], 2)
+        page_number = request.GET.get('page',1)
+        page_obj = paginated_list.get_page(page_number)
+    
+        context["property"] = page_obj
         return render(request, self.template_name, context)
 
 

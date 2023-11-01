@@ -130,6 +130,31 @@
                 <h3>No result found</h3>
             {% endfor %}
         </div>
+
+          
+
+
+
     </div>
+
+    <div  style="display: flex;justify-content: center;align-items: center;" class="pagination">
+        <span style="" class="step-links">
+            {% if property.has_previous %}
+                tes
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ property.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ property.number }} of {{ property.paginator.num_pages }}.
+            </span>
+    
+            {% if property.has_next %}
+                <a href="?page={{ property.next_page_number }}">next</a>
+                <a href="?page={{ property.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div> 
+
     <script src="{% static 'js/home.js' %}"></script>
 {% endblock %}
