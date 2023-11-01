@@ -31,7 +31,9 @@
                         {% for property_image in property.propertyimage_set.all %}
                             <div style="background-color:#f1ecec" class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
                                 <img style="width: auto;height: 700px;padding: 2px;" src="{{property_image.image.url}}" alt="Image not available" />
+                                <div>
                                 <button class="delete_image" data-image_id={{property_image.id}} >delete</a>
+                                </div>
                             </div>
                         {% empty %}
                             <h5>Image not available</h5>

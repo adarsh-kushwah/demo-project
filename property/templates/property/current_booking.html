@@ -2,7 +2,9 @@
     <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
         <div style="border: 2px solid yellow;width: 30%;">
             {% for property in booking.property_request_response.request_response_property.propertyimage_set.all %}    
-                <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                {%  if forloop.counter == 1 %}    
+                    <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                {% endif %}
             {% empty %}
                 <h5>Image not available</h5>
             {% endfor %}
