@@ -1,11 +1,17 @@
 $(document).ready(function () {
-    var count = parseInt($("#id_form-TOTAL_FORMS").val())-1;
+
+    //allowing image input to select multiple images
+    $('#image_input').attr('multiple',true);
+    
+    // adding amenity fields dynamically
+
+    var count = parseInt($("#id_form-TOTAL_FORMS").val());
 
     $("#id_form-0-name").attr('required', 'required');
 
     $("#rowAdder").click(function () {
         console.log('test')
-        count ++;
+        
         newRowAdd =
                 '<div class="added_row" ><br><label for="id_form-'+count+'-name">Name:</label>' +
                 '<input type="text" name="form-'+count+'-name" required="True" maxlength="20" id="id_form-'+count+'-name">' +
@@ -18,7 +24,9 @@ $(document).ready(function () {
                 '</select></div>' ;
         
         $('#newinput').append(newRowAdd);
-        $('#id_form-TOTAL_FORMS').val(count+1);
+        count++;
+        $('#id_form-TOTAL_FORMS').val(count);
+        
         //$('#id_form-INITIAL_FORMS').val(count);
     });
 
@@ -26,9 +34,13 @@ $(document).ready(function () {
     $(".DeleteRow").click(function () {
         $('div.added_row:last').remove();
         count --;
-        $('#id_form-TOTAL_FORMS').val(count+1);
+        $('#id_form-TOTAL_FORMS').val(count);
         //$('#id_form-INITIAL_FORMS').val(count);
     });
+    // end adding amenity fields dynamically
 
-  });
 
+    
+    
+
+});

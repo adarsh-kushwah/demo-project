@@ -4,6 +4,12 @@
         <li><a class="getstarted scrollto post_property" href="/property/post/">Post Property</a></li>
 {% endblock %}
 
+{% block css %}
+    {{block.super}}
+    <link href="{% static 'css/post_property.css' %}" rel="stylesheet">
+    
+{% endblock %}
+
 {% block js %}
     {{block.super}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -19,7 +25,9 @@
         <form action="" method="post" enctype='multipart/form-data'>
             {% csrf_token %}
             {{property_form.as_p}}
+           
             {{proprty_image_form.as_p}}
+
             {{address_form.as_p}}
             <div>
                 <h5>Amenity</h5>
@@ -34,6 +42,9 @@
                 </span> Add More Amenity
             </button>
             <br><br>
+
+
+
             <input type="submit" value="Post">
         </form>
         

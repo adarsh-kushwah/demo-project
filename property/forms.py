@@ -23,10 +23,12 @@ class PropertyForm(forms.ModelForm):
 
 
 class ProprtyImageModelForm(forms.ModelForm):
-
     class Meta:
         model = PropertyImage
         fields = ["image"]
+        widgets = {
+            'image':forms.FileInput(attrs={'id': 'image_input'})
+        }        
 
 
 class AddressModelForm(forms.ModelForm):

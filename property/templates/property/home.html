@@ -7,10 +7,7 @@
 {% block css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="{% static 'css/home.css' %}" rel="stylesheet">
-    <link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  rel="stylesheet"
-/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
@@ -85,12 +82,16 @@
             </div>
         </div>
         <div style="min-height:300px;margin-top:50px;margin-left:370px;{% if not property %} display: flex;justify-content: center;align-items: center;{% endif %}">
-            
             {% for property in property %}
                 <div style="margin: 40px 10px 0px 10px;border: 2px solid blue;display : flex;flex-direction : row;">
                     <div style="border: 2px solid yellow;width: 30%;">
-                        {% for property in property.propertyimage_set.all %}    
-                            <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                        {% for property in property.propertyimage_set.all %}
+                            {%  if forloop.counter == 1 %}
+                                <img style="width: 90%;height: 90%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+                            {% elif forloop.counter < 6 %} 
+                            <img style="width: 10%;height: 10%;padding: 2px;" src="{{property.image.url}}" alt="Image not available" />
+
+                            {% endif %}
                         {% empty %}
                             <h5>Image not available</h5>
                         {% endfor %}
