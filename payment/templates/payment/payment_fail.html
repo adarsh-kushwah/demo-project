@@ -1,14 +1,57 @@
-{% extends "user/base.html" %}
-{% load static %}
-
-{% block bill %}
-    <li><a class="nav-link scrollto active" href="{% url 'all_bills' %}">Bills</a></li>
-    {% endblock %}
-
-{% block css %}
-    <link href="{% static 'css/booking_bills.css' %}" rel="stylesheet">
-{% endblock %}
-
-{% block content %}
-    <h2>Your payment of {{paying_amount}} is failded.</h2>
-{% endblock %}
+<html>
+    <head>
+        <title>
+            Payment fail
+        </title>
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Raleway:400,700,600);
+.container{
+  padding: 20px;
+  display:flex;
+  align-items:center;
+}
+body{
+  background-color: #f6f4f4;
+  font-family: 'Raleway', sans-serif;
+}
+.teal{
+  background-color: #ffc952 !important;
+  color: #444444 !important;
+}
+a{
+  color: #47b8e0 !important;
+}
+.message{
+  text-align: left;
+}
+.price1{
+	font-size: 40px;
+	font-weight: 200;
+	display: block;
+	text-align: center;
+}
+.ui.message p {margin: 5px;}
+        </style>
+    </head>
+    <body>
+    <div  class="container">
+    <div class="ui middle aligned center aligned grid">
+      <div class="ui eight wide column">
+     
+        <form class="ui large form">
+                  
+            <div class="ui icon negative message">
+              <i class="warning icon"></i>
+              <div class="content">
+                <div class="header">
+                  Oops! Something went wrong : payment failed
+                </div>
+              </div>
+           </div>
+            <span class="ui large teal submit fluid button"><a href="/property/home/">Home</a></span>
+        </form>
+      </div>
+    </div>
+  </div>
+  <body>
+</html>

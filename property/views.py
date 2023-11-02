@@ -20,7 +20,7 @@ from django.forms import modelformset_factory
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from user.models import UserProfile
-
+from property.utility import send_email
 from property.models import (
     Booking,
     PropertyImage,
@@ -109,6 +109,7 @@ class Home(View):
         page_obj = paginated_list.get_page(page_number)
     
         context["property"] = page_obj
+
         return render(request, self.template_name, context)
 
 
@@ -512,6 +513,7 @@ class ConfirmBookingView(LoginRequiredMixin, View):
             booking = Booking.objects.create(
                 property_request_response=property_request_response
             )
+            
             agreement_form.instance.booking = booking
             property.is_available = False
             PropertyRequestResponse.objects.filter(
@@ -566,7 +568,7 @@ class BookingList(LoginRequiredMixin, ListView):
 class LeaveProperty(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         property = get_object_or_404(Property, pk=kwargs["pk"])
-        PropertyRequestResponse.objects.filter(property=property).update(status="left")
+        PropertyRequestResponse.objects.filter(request_response_property=property).update(status="left")
         property.is_available = True
         property.save()
         return redirect(reverse("home"))

@@ -171,57 +171,70 @@ def create_checkout_session(request, bill_id):
                 "quantity": 1,
             }
         ],
+        metadata = {'paying_amount': paying_amount,
+                     'user_id':request.user.id,
+                     'bill_id':bill_id,
+                     },
         mode="payment",
-        success_url=request.build_absolute_uri(
-            reverse("payment_success", args=[bill_id])
-        )
-        + "?session_id={CHECKOUT_SESSION_ID}&paying_amount="
-        + str(paying_amount),
-        cancel_url=request.build_absolute_uri(reverse("payment_fali"))
-        + "?paying_amount="
-        + str(paying_amount),
+        success_url=request.build_absolute_uri(reverse("payment_success")),
+        cancel_url=request.build_absolute_uri(reverse("payment_fail")),
     )
     return JsonResponse({"sessionId": checkout_session.id})
 
 
-class PaymentSuccessView(View):
-    def get(self, request, *args, **kwargs):
-        session_id = request.GET.get("session_id")
-        if session_id is None:
-            return HttpResponseNotFound()
+@csrf_exempt
+def my_webhook_view(request):
 
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-        session = stripe.checkout.Session.retrieve(session_id)
-        payment_intent = session.payment_intent
-        paying_amount = int(request.GET.get("paying_amount"))
-        bill = Bill.objects.get(id=kwargs["bill_id"])
-        user = UserProfile.objects.get(id=request.user.id)
-        payable_amount = bill.amount - bill.paid_amount
-
-        if paying_amount >= payable_amount:
-            status = "paid"
-        else:
-            status = "partial_paid"
-
-        bill.status = status
-        Payment.objects.create(
-            user=user,
-            bill=bill,
-            amount=paying_amount,
-            source="stripe",
-            status="success",
-            checkout_session_id=session_id,
-            payment_intent=payment_intent,
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    endpoint_secret = 'whsec_fc8a04bccffd45dace668e2090f077006296dacc4d6cdefa45e4d76505b66595'
+    
+    try:
+        event = stripe.Webhook.construct_event(
+        payload, sig_header, endpoint_secret
         )
-        bill.save()
-        context = {"paying_amount": paying_amount}
-        return redirect(reverse("all_bills"))
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        
+        paid_amount = int(session["metadata"]["paying_amount"])
+        user_id = int(session["metadata"]["user_id"])
+        bill_id = int(session["metadata"]["bill_id"])
+        session_id= session["id"]
+        payment_intent = session["payment_intent"]
+        
+        fulfill_order(user_id, bill_id, paid_amount, session_id, payment_intent)
+
+    return HttpResponse(status=200)
 
 
-class PaymentFailView(View):
-    template_name = "payment/payment_fail.html"
+def fulfill_order(user_id, bill_id, paying_amount, session_id, payment_intent):
+    # TODO: fill me in
+    bill = Bill.objects.get(id=bill_id)
+    user = UserProfile.objects.get(id=user_id)
+    payable_amount = bill.amount - bill.paid_amount
 
-    def get(self, request, *args, **kwargs):
-        paying_amount = int(request.GET.get("paying_amount"))
-        context = {"paying_amount": paying_amount}
-        return render(request, self.template_name, context)
+    if paying_amount >= payable_amount:
+        status = "paid"
+    else:
+        status = "partial_paid"
+
+    bill.status = status
+    Payment.objects.create(
+        user=user,
+        bill=bill,
+        amount=paying_amount,
+        source="stripe",
+        status="success",
+        checkout_session_id=session_id,
+        payment_intent=payment_intent,
+    )
+    bill.save()

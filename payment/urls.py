@@ -5,10 +5,9 @@ from payment.views import (
     AllBookingBillView,
     PayBillView,
     create_checkout_session,
-    PaymentSuccessView,
-    PaymentFailView,
+    
 )
-
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path("all-bills/", AllBookingBillView.as_view(), name="all_bills"),
@@ -20,13 +19,13 @@ urlpatterns = [
         name="api_checkout_session",
     ),
     path(
-        "payment-success/<int:bill_id>/",
-        PaymentSuccessView.as_view(),
+        "payment-success/",
+        TemplateView.as_view(template_name="payment/payment_success.html"),
         name="payment_success",
     ),
     path(
         "payment-fail/",
-        PaymentFailView.as_view(),
-        name="payment_fali",
+        TemplateView.as_view(template_name="payment/payment_fail.html"),
+        name="payment_fail",
     ),
 ]
