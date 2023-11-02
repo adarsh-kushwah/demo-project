@@ -48,6 +48,7 @@ from payment.utility import generate_pdf
 
 class Home(View):
     template_name = "property/home.html"
+    property_per_page = 2
 
     """
         Home view showing properties according to authenticated user
@@ -67,15 +68,15 @@ class Home(View):
             context["user"] = user
             if user.user_type == "owner":
                 context["property"] = user.property_set.all().annotate(
-                    rating=Avg("propertyrating__rating")
+                    rating=Avg("propertyrating__rating").order_by('created_at')
                 )
             else:
                 context["property"] = Property.objects.filter(
                     is_available=True
-                ).annotate(rating=Avg("propertyrating__rating"))
+                ).annotate(rating=Avg("propertyrating__rating")).order_by('created_at')
         else:
             context["property"] = Property.objects.filter(is_available=True).annotate(
-                rating=Avg("propertyrating__rating")
+                rating=Avg("propertyrating__rating").order_by('created_at')
             )
 
         if "search" in request.GET:
@@ -104,7 +105,7 @@ class Home(View):
                 )
             context["property_type"] = property_type
 
-        paginated_list = Paginator(context["property"], 2)
+        paginated_list = Paginator(context["property"], self.property_per_page)
         page_number = request.GET.get('page',1)
         page_obj = paginated_list.get_page(page_number)
     
