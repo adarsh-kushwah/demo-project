@@ -171,10 +171,11 @@ def create_checkout_session(request, bill_id):
                 "quantity": 1,
             }
         ],
-        metadata = {'paying_amount': paying_amount,
-                     'user_id':request.user.id,
-                     'bill_id':bill_id,
-                     },
+        metadata={
+            "paying_amount": paying_amount,
+            "user_id": request.user.id,
+            "bill_id": bill_id,
+        },
         mode="payment",
         success_url=request.build_absolute_uri(reverse("payment_success")),
         cancel_url=request.build_absolute_uri(reverse("payment_fail")),
@@ -184,17 +185,16 @@ def create_checkout_session(request, bill_id):
 
 @csrf_exempt
 def my_webhook_view(request):
-
     stripe.api_key = settings.STRIPE_SECRET_KEY
     payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None
-    endpoint_secret = 'whsec_fc8a04bccffd45dace668e2090f077006296dacc4d6cdefa45e4d76505b66595'
-    
+    endpoint_secret = (
+        "whsec_fc8a04bccffd45dace668e2090f077006296dacc4d6cdefa45e4d76505b66595"
+    )
+
     try:
-        event = stripe.Webhook.construct_event(
-        payload, sig_header, endpoint_secret
-        )
+        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
     except ValueError as e:
         # Invalid payload
         return HttpResponse(status=400)
@@ -202,15 +202,15 @@ def my_webhook_view(request):
         # Invalid signature
         return HttpResponse(status=400)
 
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+
         paid_amount = int(session["metadata"]["paying_amount"])
         user_id = int(session["metadata"]["user_id"])
         bill_id = int(session["metadata"]["bill_id"])
-        session_id= session["id"]
+        session_id = session["id"]
         payment_intent = session["payment_intent"]
-        
+
         fulfill_order(user_id, bill_id, paid_amount, session_id, payment_intent)
 
     return HttpResponse(status=200)

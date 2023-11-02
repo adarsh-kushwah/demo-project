@@ -62,21 +62,23 @@ class Home(View):
 
     def get(self, request, *args, **kwargs):
         context = {}
-        
+
         if not request.user.is_anonymous:
             user = UserProfile.objects.get(username=request.user.username)
             context["user"] = user
             if user.user_type == "owner":
                 context["property"] = user.property_set.all().annotate(
-                    rating=Avg("propertyrating__rating").order_by('created_at')
+                    rating=Avg("propertyrating__rating").order_by("created_at")
                 )
             else:
-                context["property"] = Property.objects.filter(
-                    is_available=True
-                ).annotate(rating=Avg("propertyrating__rating")).order_by('created_at')
+                context["property"] = (
+                    Property.objects.filter(is_available=True)
+                    .annotate(rating=Avg("propertyrating__rating"))
+                    .order_by("created_at")
+                )
         else:
             context["property"] = Property.objects.filter(is_available=True).annotate(
-                rating=Avg("propertyrating__rating").order_by('created_at')
+                rating=Avg("propertyrating__rating").order_by("created_at")
             )
 
         if "search" in request.GET:
@@ -106,9 +108,9 @@ class Home(View):
             context["property_type"] = property_type
 
         paginated_list = Paginator(context["property"], self.property_per_page)
-        page_number = request.GET.get('page',1)
+        page_number = request.GET.get("page", 1)
         page_obj = paginated_list.get_page(page_number)
-    
+
         context["property"] = page_obj
 
         return render(request, self.template_name, context)
@@ -514,7 +516,7 @@ class ConfirmBookingView(LoginRequiredMixin, View):
             booking = Booking.objects.create(
                 property_request_response=property_request_response
             )
-            
+
             agreement_form.instance.booking = booking
             property.is_available = False
             PropertyRequestResponse.objects.filter(
@@ -569,7 +571,9 @@ class BookingList(LoginRequiredMixin, ListView):
 class LeaveProperty(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         property = get_object_or_404(Property, pk=kwargs["pk"])
-        PropertyRequestResponse.objects.filter(request_response_property=property).update(status="left")
+        PropertyRequestResponse.objects.filter(
+            request_response_property=property
+        ).update(status="left")
         property.is_available = True
         property.save()
         return redirect(reverse("home"))

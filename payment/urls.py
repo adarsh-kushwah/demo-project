@@ -5,7 +5,6 @@ from payment.views import (
     AllBookingBillView,
     PayBillView,
     create_checkout_session,
-    
 )
 from django.views.generic.base import TemplateView
 

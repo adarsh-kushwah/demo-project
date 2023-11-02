@@ -154,10 +154,9 @@ if DEBUG:
 # sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'adarsh.kushwah@codiatic.com'
-EMAIL_HOST_PASSWORD = 'kkwy kjei tojb ozbo'
-
+EMAIL_HOST_USER = "adarsh.kushwah@codiatic.com"
+EMAIL_HOST_PASSWORD = "kkwy kjei tojb ozbo"
