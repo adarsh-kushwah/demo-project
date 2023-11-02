@@ -1826,7 +1826,12 @@ section {
   }
 }
 
-.login-signup-form{
+.signup-form{
+  width: 100% !important;
+
+}
+
+.login-form{
   width: 30% !important;
 
 }

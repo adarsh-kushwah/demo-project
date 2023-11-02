@@ -22,79 +22,88 @@
 {% block content %}
     <section id="about" class="about">
         <div class="container" data-aos="fade-up" style="display: flex; justify-content: center; align-items: center;">
-            <div class="row content login-signup-form">
+            <div class="row content signup-form">
                 <div class="tab-content">
                     <form id="signupform" method="post" action="{% url 'signup' %}" enctype='multipart/form-data'>
-                        <h3>Signup</h3>
+                        <div class="signup_label_button_div">
+                            <h3>Signup</h3>
+                        </div>
                         {% csrf_token %}
-                        <div class="form-outline mb-4">
-                            <input type="name" id="username_id" name="{{profile_form.username.name}}" class="form-control" />
-                            <label class="form-label" for="username_id">Username</label>
-                        </div>
+                        <div style="display:flex;" >
+                            <div style="float:left;width:50%;padding:20px;" >
+                                
+                                <div class="form-outline mb-4">
+                                    <input required type="name" id="username_id" name="{{profile_form.username.name}}" class="form-control" />
+                                    <label class="form-label" for="username_id">Username</label>
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            <input type="input" id="firstname_id" name="{{profile_form.first_name.name}}" class="form-control" />
-                            <label class="form-label" for="firstname_id">First name</label>
-                        </div>
+                                <div class="form-outline mb-4">
+                                    <input required type="input" id="firstname_id" name="{{profile_form.first_name.name}}" class="form-control" />
+                                    <label class="form-label" for="firstname_id">First name</label>
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            <input type="name" id="lastname_id" name="{{profile_form.last_name.name}}" class="form-control" />
-                            <label class="form-label" for="lastname_id">Last name</label>
-                        </div>
+                                <div class="form-outline mb-4">
+                                    <input type="name" id="lastname_id" name="{{profile_form.last_name.name}}" class="form-control" />
+                                    <label class="form-label" for="lastname_id">Last name</label>
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            <input type="name" id="phone_id" name="{{profile_form.phone_number.name}}" class="form-control" />
-                            <label class="form-label" for="phone_id">Phone</label>
-                        </div>
+                                <div class="form-outline mb-4">
+                                    <input required type="name" id="phone_id" name="{{profile_form.phone_number.name}}" class="form-control" />
+                                    <label class="form-label" for="phone_id">Phone</label>
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            <input type="name" id="phone_id" name="{{profile_form.alternate_phone_number.name}}" class="form-control" />
-                            <label class="form-label" for="phone_id">Alternate Phone</label>
-                        </div>
+                                <div class="form-outline mb-4">
+                                    <input type="name" id="alt_phone_id" name="{{profile_form.alternate_phone_number.name}}" class="form-control" />
+                                    <label class="form-label" for="alt_phone_id">Alternate Phone</label>
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            <input type="name" id="phone_id" name="{{profile_form.password1.name}}" class="form-control" />
-                            <label class="form-label" for="phone_id">Password</label>
-                        </div>
+                                <div class="form-outline mb-4">
+                                    <input required type="password" id="password1_id" name="{{profile_form.password1.name}}" class="form-control" />
+                                    <label class="form-label" for="password1_id">Password</label>
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            <input type="name" id="phone_id" name="{{profile_form.password2.name}}" class="form-control" />
-                            <label class="form-label" for="phone_id">Confirm Password</label>
-                        </div>
-                        
-                        <div class="form-outline mb-4">
-                            {{profile_form.user_type.label}}
-                            {{profile_form.user_type}}
-                        </div>
-                        
-                        <div class="form-outline mb-4">
-                            {{profile_form.gender.label}}
-                            {{profile_form.gender}}
-                        </div>
+                                <div class="form-outline mb-4">
+                                    <input required type="password" id="password2_id" name="{{profile_form.password2.name}}" class="form-control" />
+                                    <label class="form-label" for="password2_id">Confirm Password</label>
+                                </div>
+                            </div>
 
-                        <div class="form-outline mb-4">
-                            {{profile_form.date_of_birth.label}}
-                            {{profile_form.date_of_birth}}
-                        </div>
+                            <div style="float:right;width:50%" >
+                                
+                                <div class="form-outline mb-4">
+                                    {{profile_form.user_type.label}}
+                                    {{profile_form.user_type}}
+                                </div>
+                                
+                                <div class="form-outline mb-4">
+                                    {{profile_form.gender.label}}
+                                    {{profile_form.gender}}
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            {{profile_form.marital_status.label}}
-                            {{profile_form.marital_status}}
-                        </div>
+                                <div class="form-outline mb-4">
+                                    {{profile_form.date_of_birth.label}}
+                                    {{profile_form.date_of_birth}}
+                                </div>
 
-                        <div class="form-outline mb-4">
-                            {{profile_form.profile_picture.label}}
-                            {{profile_form.profile_picture}}
-                        </div>
+                                <div class="form-outline mb-4">
+                                    {{profile_form.marital_status.label}}
+                                    {{profile_form.marital_status}}
+                                </div>
 
-                        {{address_form.as_p}}
-                        
-                        <!-- Submit button -->
-                        <button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
-                    </form>                  
+                                <div class="form-outline mb-4">
+                                    {{profile_form.profile_picture.label}}
+                                    {{profile_form.profile_picture}}
+                                </div>
+                                {{address_form.as_p}}
+                            </div>                                              
+                        </div>
+                        <div class="signup_label_button_div">
+                            <button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
+                        </div>
+                    </form> 
                 </div>
             </div>
-        </div>  
+        </div>
     </section>
 
     {% block js %}

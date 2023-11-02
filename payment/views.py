@@ -217,7 +217,7 @@ def my_webhook_view(request):
 
 
 def fulfill_order(user_id, bill_id, paying_amount, session_id, payment_intent):
-    # TODO: fill me in
+    
     bill = Bill.objects.get(id=bill_id)
     user = UserProfile.objects.get(id=user_id)
     payable_amount = bill.amount - bill.paid_amount

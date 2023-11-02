@@ -1,31 +1,26 @@
 from typing import Any
 import os
 import json
-from django.shortcuts import render, redirect
+
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
-from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
-from django.forms import formset_factory
-from django.db.models import Q, Subquery
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
-from django.urls import reverse_lazy
-from django.db.models import Avg
-from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator 
+from django.db.models import Q, Subquery, Avg
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse, QueryDict
-from django.forms import modelformset_factory
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 from user.models import UserProfile
-from property.utility import send_email
+
 from property.models import (
     Booking,
     PropertyImage,
     Property,
-    Agreement,
     PropertyRequestResponse,
     Amenity,
 )
@@ -36,10 +31,7 @@ from property.forms import (
     RequestPropertyModelForm,
     PropertyRequestResponseForm,
     AgreementModelForm,
-    AmenityModelForm,
 )
-
-from rating.models import PropertyRating, RenterRating
 
 from rating.forms import PropertyReviewModelForm, RenterReviewModelForm
 
@@ -81,13 +73,13 @@ class Home(View):
         
 
         if "search" in request.GET:
-            value = request.GET.get("search")
+            search_value = request.GET.get("search")
             context["property"] = context["property"].filter(
-                Q(name__icontains=value)
-                | Q(propertyaddress__street_address__icontains=value)
-                | Q(propertyaddress__location__city__icontains=value)
+                Q(name__icontains=search_value)
+                | Q(propertyaddress__street_address__icontains=search_value)
+                | Q(propertyaddress__location__city__icontains=search_value)
             )
-            context["search"] = value
+            context["search"] = search_value
 
         if "min_price" and "max_price" in request.GET:
             min_price = request.GET.get("min_price")
@@ -111,13 +103,13 @@ class Home(View):
         page_obj = paginated_list.get_page(page_number)
 
         context["property"] = page_obj
-
         return render(request, self.template_name, context)
 
 
 class PostPropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
-    amenity_model_formset = modelformset_factory(Amenity, fields=["name", "status"])
+    amenity_model_formset = forms.modelformset_factory(Amenity, fields=["name", "status"])
+    
     """
         Owner can Post new property
     """
@@ -184,7 +176,7 @@ class PostPropertyView(LoginRequiredMixin, View):
 class UpdatePropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
     template_name = "property/update_property.html"
-    amenity_model_formset = modelformset_factory(
+    amenity_model_formset = forms.modelformset_factory(
         Amenity, fields=["name", "status"], extra=0
     )
 
@@ -258,7 +250,6 @@ class UpdatePropertyView(LoginRequiredMixin, View):
                     amenity_form_set.errors,
                 )
 
-        postal_code = property.propertyaddress.location.postal_code
         context_data = {
             "property": property,
             "property_form": property_form,
@@ -271,11 +262,11 @@ class UpdatePropertyView(LoginRequiredMixin, View):
     def delete(self, request, *args, **kwargs):
         data = QueryDict(request.body)
         request_type = data.get("request_type", None)
+
         if request_type == "delete_property_image":
             image_id = kwargs["pk"]
             property_image = PropertyImage.objects.get(id=image_id)
             property_image.delete()
-
             return JsonResponse({})
 
 
@@ -375,7 +366,7 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
 
 class RequestResponseView(LoginRequiredMixin, View):
     template_name = "property/request_detail.html"
-
+    request_response_status = PropertyRequestResponse.STATUS_CHOICES
     """
         GET :- Owner can response to Renter's request
             Showing PropertyRequestResponse form 
@@ -383,7 +374,6 @@ class RequestResponseView(LoginRequiredMixin, View):
         
         POST :- Owner can response to renter's request
     """
-
     def get(self, request, *args, **kwargs):
         property_request_id = kwargs["pk"]
 
@@ -399,7 +389,8 @@ class RequestResponseView(LoginRequiredMixin, View):
             "property_request": property_request,
             "request_response": request_response,
         }
-        if request_response.status == "responsed":
+        if request_response.status == self.request_response_status[1][0]:
+            #for responsed requests
             inital_data = {
                 "start_date": request_response.start_date,
                 "end_date": request_response.end_date,
@@ -440,8 +431,9 @@ class RequestResponseView(LoginRequiredMixin, View):
             )
             property_request_response_form.save()
             PropertyRequestResponse.objects.filter(request_token=request_token).update(
-                status="responsed"
+                status = self.request_response_status[1][0]
             )
+            #here status = responsed
             return redirect(reverse("home"))
 
     def delete(self, request, *args, **kwargs):
@@ -454,7 +446,7 @@ class RequestResponseView(LoginRequiredMixin, View):
             if reject_request == "owner":
                 PropertyRequestResponse.objects.filter(
                     request_token=property_request.request_token
-                ).update(status="rejected")
+                ).update(status=self.request_response_status[2][0])
             else:
                 PropertyRequestResponse.objects.filter(
                     request_token=property_request.request_token
@@ -503,6 +495,7 @@ class ConfirmBookingView(LoginRequiredMixin, View):
     """
 
     login_url = "/user/login/"
+    request_response_status = PropertyRequestResponse.STATUS_CHOICES
 
     def post(self, request, *args, **kwargs):
         property_request_response_id = kwargs["pk"]
@@ -520,7 +513,8 @@ class ConfirmBookingView(LoginRequiredMixin, View):
             property.is_available = False
             PropertyRequestResponse.objects.filter(
                 request_token=property_request_response.request_token
-            ).update(status="approved")
+            ).update(status=self.request_response_status[3][0])
+            # status = approved
             agreement_form.save()
             property.save()
 
@@ -532,6 +526,7 @@ class ConfirmBookingView(LoginRequiredMixin, View):
 class BookingList(LoginRequiredMixin, ListView):
     login_url = "/user/login/"
     model = Booking
+    request_response_status = PropertyRequestResponse.STATUS_CHOICES
 
     def get_queryset(self):
         user_id = self.request.user.id
@@ -539,11 +534,11 @@ class BookingList(LoginRequiredMixin, ListView):
         quertset = self.model.objects.filter(
             property_request_response__request_token__in=Subquery(
                 PropertyRequestResponse.objects.filter(
-                    user__id=user_id, status="approved"
+                    user__id=user_id, status=self.request_response_status[3][0]
                 ).values("request_token")
             ),
         ).order_by("created_at")
-
+        # status = approved
         return quertset
 
     def get_context_data(self, **kwargs):
@@ -554,25 +549,26 @@ class BookingList(LoginRequiredMixin, ListView):
             property_request_response__request_token__in=Subquery(
                 PropertyRequestResponse.objects.filter(
                     user__id=user_id,
-                    status="left",
+                    status=self.request_response_status[4][0],
                 ).values("request_token")
             ),
         ).order_by("created_at")
+        # status = left
         context["property_review_form"] = PropertyReviewModelForm()
         context["renter_review_form"] = RenterReviewModelForm()
 
         return context
 
-    # def get_success_url(self):
-    #     return reverse_lazy('property_request_response', kwargs={'pk': self.object.property_request.id})
-
 
 class LeaveProperty(LoginRequiredMixin, View):
+    request_response_status = PropertyRequestResponse.STATUS_CHOICES
+
     def get(self, request, *args, **kwargs):
         property = get_object_or_404(Property, pk=kwargs["pk"])
         PropertyRequestResponse.objects.filter(
             request_response_property=property
-        ).update(status="left")
+        ).update(status=self.request_response_status[4][0])
+        # status left
         property.is_available = True
         property.save()
         return redirect(reverse("home"))

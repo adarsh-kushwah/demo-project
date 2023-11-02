@@ -7,6 +7,9 @@ import threading
 
 @receiver(post_save, sender=Booking)
 def send_mail_to_owner(sender, instance, created, **kwargs):
+    """
+    receiver to send email to owner when booking Confirmed by renter
+    """
     if created:
         recepient_email = [instance.property_request_response.user.email]
         subject = "Booking confirmed"
