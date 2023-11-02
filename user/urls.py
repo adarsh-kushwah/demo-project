@@ -9,8 +9,7 @@ urlpatterns = [
     path(
         "login/",
         auth_views.LoginView.as_view(
-            next_page=reverse_lazy("home"),
-            template_name="user/login.html"
+            next_page=reverse_lazy("home"), template_name="user/login.html"
         ),
         name="login",
     ),

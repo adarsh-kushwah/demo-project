@@ -12,11 +12,10 @@ class OwnerLoginMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class UserAccessMixin():
-
+class UserAccessMixin:
     def dispatch(self, request, *args, **kwargs):
         # Get the user ID from the URL parameters
-        url_user_id = kwargs.get('id')
+        url_user_id = kwargs.get("id")
 
         # Check if the URL's user ID matches the logged-in user's ID
         if str(request.user.id) != url_user_id:

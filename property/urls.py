@@ -15,7 +15,6 @@ from property.views import (
 )
 
 
-
 urlpatterns = [
     path("home/", Home.as_view(), name="home"),
     path("post/", PostPropertyView.as_view(), name="post_property"),

@@ -9,7 +9,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
-from django.core.paginator import Paginator 
+from django.core.paginator import Paginator
 from django.db.models import Q, Subquery, Avg
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse, QueryDict
@@ -59,18 +59,25 @@ class Home(View):
             user = UserProfile.objects.get(username=request.user.username)
             context["user"] = user
             if user.user_type == "owner":
-                context["property"] = user.property_set.all().annotate(
-                    rating=Avg("propertyrating__rating")).order_by("created_at")
-                
+                context["property"] = (
+                    user.property_set.all()
+                    .annotate(rating=Avg("propertyrating__rating"))
+                    .order_by("created_at")
+                )
+
             else:
                 context["property"] = (
                     Property.objects.filter(is_available=True)
-                    .annotate(rating=Avg("propertyrating__rating")).order_by("created_at"))
-                
+                    .annotate(rating=Avg("propertyrating__rating"))
+                    .order_by("created_at")
+                )
+
         else:
-            context["property"] = Property.objects.filter(is_available=True).annotate(
-                rating=Avg("propertyrating__rating")).order_by("created_at")
-        
+            context["property"] = (
+                Property.objects.filter(is_available=True)
+                .annotate(rating=Avg("propertyrating__rating"))
+                .order_by("created_at")
+            )
 
         if "search" in request.GET:
             search_value = request.GET.get("search")
@@ -108,8 +115,10 @@ class Home(View):
 
 class PostPropertyView(LoginRequiredMixin, View):
     login_url = "/user/login/"
-    amenity_model_formset = forms.modelformset_factory(Amenity, fields=["name", "status"])
-    
+    amenity_model_formset = forms.modelformset_factory(
+        Amenity, fields=["name", "status"]
+    )
+
     """
         Owner can Post new property
     """
@@ -374,6 +383,7 @@ class RequestResponseView(LoginRequiredMixin, View):
         
         POST :- Owner can response to renter's request
     """
+
     def get(self, request, *args, **kwargs):
         property_request_id = kwargs["pk"]
 
@@ -390,7 +400,7 @@ class RequestResponseView(LoginRequiredMixin, View):
             "request_response": request_response,
         }
         if request_response.status == self.request_response_status[1][0]:
-            #for responsed requests
+            # for responsed requests
             inital_data = {
                 "start_date": request_response.start_date,
                 "end_date": request_response.end_date,
@@ -431,9 +441,9 @@ class RequestResponseView(LoginRequiredMixin, View):
             )
             property_request_response_form.save()
             PropertyRequestResponse.objects.filter(request_token=request_token).update(
-                status = self.request_response_status[1][0]
+                status=self.request_response_status[1][0]
             )
-            #here status = responsed
+            # here status = responsed
             return redirect(reverse("home"))
 
     def delete(self, request, *args, **kwargs):
