@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
 from django.contrib.auth import views as auth_views
 
 from user.views import SignupView, ViewProfile, UpdateProfile
@@ -9,7 +9,8 @@ urlpatterns = [
     path(
         "login/",
         auth_views.LoginView.as_view(
-            next_page="/property/home/", template_name="user/login.html"
+            next_page=reverse_lazy("home"),
+            template_name="user/login.html"
         ),
         name="login",
     ),

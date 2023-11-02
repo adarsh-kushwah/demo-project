@@ -47,4 +47,6 @@ class UserProfileModelForm(UserCreationForm):
             "phone_number",
             "alternate_phone_number",
         ]
-        widgets = {"password": forms.PasswordInput()}
+        widgets = {"password": forms.PasswordInput(),
+                   "date_of_birth" : forms.widgets.DateInput(attrs={"type": "date"}),
+                   }

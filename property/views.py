@@ -68,18 +68,17 @@ class Home(View):
             context["user"] = user
             if user.user_type == "owner":
                 context["property"] = user.property_set.all().annotate(
-                    rating=Avg("propertyrating__rating").order_by("created_at")
-                )
+                    rating=Avg("propertyrating__rating")).order_by("created_at")
+                
             else:
                 context["property"] = (
                     Property.objects.filter(is_available=True)
-                    .annotate(rating=Avg("propertyrating__rating"))
-                    .order_by("created_at")
-                )
+                    .annotate(rating=Avg("propertyrating__rating")).order_by("created_at"))
+                
         else:
             context["property"] = Property.objects.filter(is_available=True).annotate(
-                rating=Avg("propertyrating__rating").order_by("created_at")
-            )
+                rating=Avg("propertyrating__rating")).order_by("created_at")
+        
 
         if "search" in request.GET:
             value = request.GET.get("search")

@@ -76,9 +76,7 @@
                                 <li><a class="getstarted scrollto post_property" href="{% url 'login' %}">Post Property</a></li>
                             {% endblock %}
                         {% elif request.user.user_type == "owner" %}
-                            {% block post_property_nav %}
                                 <li><a class="getstarted scrollto post_property" href="{% url 'post_property' %}">Post Property</a></li>
-                            {% endblock %}
                         {% endif %}
 
                         {% if request.user.is_authenticated %}
