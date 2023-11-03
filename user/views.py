@@ -18,8 +18,9 @@ class SignupView(LogoutIfAuthenticatedMixin, View):
     """
     signup view for owner and renter
     """
+
     def get(self, request, *args, **kwargs):
-        #ajax request when user select state and city
+        # ajax request when user select state and city
         if "state" in request.GET:
             state = request.GET.get("state")
             city_list = [
@@ -67,6 +68,7 @@ class ViewProfile(LoginRequiredMixin, UserAccessMixin, DetailView):
     """
     user and renter can view their profile
     """
+
     pk_url_kwarg = "user_id"
     login_url = reverse_lazy("login")
     model = UserProfile

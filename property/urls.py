@@ -18,8 +18,16 @@ from property.views import (
 urlpatterns = [
     path("home/", Home.as_view(), name="home"),
     path("post/", PostPropertyView.as_view(), name="post_property"),
-    path("update/<int:property_id>/", UpdatePropertyView.as_view(), name="update_property"),
-    path("detail/<int:property_id>/", PropertyDetailView.as_view(), name="property_detail"),
+    path(
+        "update/<int:property_id>/",
+        UpdatePropertyView.as_view(),
+        name="update_property",
+    ),
+    path(
+        "detail/<int:property_id>/",
+        PropertyDetailView.as_view(),
+        name="property_detail",
+    ),
     path("requests/", PropertyRequestList.as_view(), name="property_requests"),
     path(
         "request-response/<int:pk>/",

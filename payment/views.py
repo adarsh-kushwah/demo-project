@@ -38,9 +38,9 @@ class AllBookingBillView(View):
         user_id = self.request.user.id
         bookings = Booking.objects.filter(
             property_request_response__request_token__in=Subquery(
-                PropertyRequestResponse.objects.filter(
-                    user__id=user_id
-                ).values("request_token")
+                PropertyRequestResponse.objects.filter(user__id=user_id).values(
+                    "request_token"
+                )
             ),
         ).order_by("created_at")
 

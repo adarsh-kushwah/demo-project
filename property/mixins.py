@@ -21,12 +21,14 @@ class ProperetyAccessMixin:
     """
 
     def dispatch(self, request, *args, **kwargs):
-        property_id = kwargs.get("pk",None)
+        property_id = kwargs.get("pk", None)
 
         if property_id:
             property = get_object_or_404(Property, pk=property_id)
 
             if property.owner.id != request.user.id:
-                raise PermissionDenied("You do not have permission to access others property.")
-        
+                raise PermissionDenied(
+                    "You do not have permission to access others property."
+                )
+
         return super().dispatch(request, *args, **kwargs)
