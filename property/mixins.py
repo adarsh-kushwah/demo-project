@@ -1,4 +1,6 @@
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+from property.models import Property
 
 
 class OwnerLoginMixin:
@@ -12,13 +14,19 @@ class OwnerLoginMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class UserAccessMixin:
+class ProperetyAccessMixin:
+
+    """
+    permission mixin :- Only logged in owner can update his own property
+    """
+
     def dispatch(self, request, *args, **kwargs):
-        # Get the user ID from the URL parameters
-        url_user_id = kwargs.get("id")
+        property_id = kwargs.get("pk",None)
 
-        # Check if the URL's user ID matches the logged-in user's ID
-        if str(request.user.id) != url_user_id:
-            raise PermissionDenied("You do not have permission to access this.")
+        if property_id:
+            property = get_object_or_404(Property, pk=property_id)
 
+            if property.owner.id != request.user.id:
+                raise PermissionDenied("You do not have permission to access others property.")
+        
         return super().dispatch(request, *args, **kwargs)

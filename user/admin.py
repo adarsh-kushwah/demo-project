@@ -1,9 +1,13 @@
 from django.contrib import admin
 
-from user.models import UserProfile
+from user.models import Location, UserProfile
 
 
-# Register your models here.
-@admin.register(UserProfile)
+@admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ["username", "first_name"]
+    list_display = ["state", "city", "postal_code"]
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ["first_name", "last_name", "user_type", "date_of_birth","gender","marital_status","profile_picture","phone_number","alternate_phone_number","created_at"]

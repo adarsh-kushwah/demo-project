@@ -1,22 +1,25 @@
 from typing import Any
-from django.urls import reverse
+
+from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms import DateInput
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.views.generic.edit import UpdateView
-from django.urls import reverse_lazy
-
-from django.forms import DateInput
 
 from user.forms import UserProfileModelForm, AddressModelForm
-from user.models import Location, UserAddress, UserProfile
-from user.mixins import LogoutIfAuthenticatedMixin
+from user.models import Location, UserProfile
+from user.mixins import LogoutIfAuthenticatedMixin, UserAccessMixin
 
 
 class SignupView(LogoutIfAuthenticatedMixin, View):
+    """
+    signup view for owner and renter
+    """
     def get(self, request, *args, **kwargs):
+        #ajax request when user select state and city
         if "state" in request.GET:
             state = request.GET.get("state")
             city_list = [
@@ -54,20 +57,24 @@ class SignupView(LogoutIfAuthenticatedMixin, View):
             address_form.save()
             return redirect(reverse("login"))
         else:
-            print("-----=", profile_form.errors, address_form.errors)
+            print(profile_form.errors, address_form.errors)
 
         context = {"address_form": address_form, "profile_form": profile_form}
         return render(request, "user/signup.html", context)
 
 
-class ViewProfile(LoginRequiredMixin, DetailView):
+class ViewProfile(LoginRequiredMixin, UserAccessMixin, DetailView):
+    """
+    user and renter can view their profile
+    """
+    pk_url_kwarg = "user_id"
+    login_url = reverse_lazy("login")
     model = UserProfile
-    login_url = "/user/login/"
-    pk_url_kwarg = "user_id"
 
 
-class UpdateProfile(LoginRequiredMixin, UpdateView):
+class UpdateProfile(LoginRequiredMixin, UserAccessMixin, UpdateView):
     pk_url_kwarg = "user_id"
+    login_url = reverse_lazy("login")
     model = UserProfile
     template_name = "user/userprofile_detail.html"
     fields = [

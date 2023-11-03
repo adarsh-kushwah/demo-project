@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -148,15 +150,13 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join("media")
 
 if DEBUG:
-    STRIPE_PUBLISHABLE_KEY = "pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff"
-    STRIPE_SECRET_KEY = "sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1"
-# pk_test_51O5QnNSBhvk8lerFTmdf6KA8iPea4TgNhwj5N9MuGURnNkuykcIOCTT1yrq4uMuqF6mf3I6hTgsoMlQzPz2n5AHu00axP03pff
-# sk_test_51O5QnNSBhvk8lerFs72bgUl7PwIFOtvMUmeduZTJwIwoNWql8lhCYnoqeDYBQqfwsIVYngSRmj2MFHZgXXdE9gUq004oPXvrW1
-
+    STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+    ENDPOINT_SECRET = os.environ.get('ENDPOINT_SECRET')
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "adarsh.kushwah@codiatic.com"
-EMAIL_HOST_PASSWORD = "kkwy kjei tojb ozbo"
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')

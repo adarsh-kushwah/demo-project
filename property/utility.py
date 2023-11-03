@@ -15,4 +15,4 @@ def send_email(subject, mail_content, recepient_list):
             fail_silently=False,
         )
     except:
-        print("emial esend failed")
+        print("email send failed")
