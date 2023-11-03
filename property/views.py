@@ -197,8 +197,10 @@ class UpdatePropertyView(LoginRequiredMixin, ProperetyAccessMixin, View):
 
     def get(self, request, *args, **kwargs):
         property = get_object_or_404(Property, pk=kwargs["property_id"])
-        postal_code = property.propertyaddress.location.postal_code
-
+        if property.propertyaddress.location:
+            postal_code = property.propertyaddress.location.postal_code
+        else:
+            postal_code = 'not available'
         context_data = {
             "property": property,
             "property_form": PropertyForm(instance=property),
@@ -280,6 +282,7 @@ class UpdatePropertyView(LoginRequiredMixin, ProperetyAccessMixin, View):
 
 
 class PropertyDetailView(LoginRequiredMixin, DetailView):
+    pk_url_kwarg = "property_id"
     login_url = reverse_lazy("login")
     model = Property
     """
@@ -373,6 +376,7 @@ class PropertyRequestList(LoginRequiredMixin, ListView):
                 user__user_type=self.user_type_choices[0][0],
             ).annotate(rating=Avg("request_response_property__renterrating__rating"))
         else:
+            # status =  "processing" |"responsed" | rejected""
             queryset = self.model.objects.filter(
                 Q(status=self.request_response_status[0][0])
                 | Q(status=self.request_response_status[1][0])

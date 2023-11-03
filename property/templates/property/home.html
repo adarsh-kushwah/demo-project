@@ -99,7 +99,7 @@
                         <h4 >Name:  {{property.name|default:"not available"}} </h4>
                         <h4 >Address: {{property.propertyaddress.full_address|default:"not available"}} </h4>
                         <h4 >Type: {{property.property_type|default:"not available"}}</h4>
-                        <h4>Rent amount : {{property.rent_amount}} </h4>
+                        <h4>Rent amount : ₹ {{property.rent_amount}} </h4>
                         <h4>Property Ratings : 
                             <span class="fa fa-star {% if property.rating >= 1 %} checked {% endif %}"></span>
                             <span class="fa fa-star {% if property.rating >= 2 %} checked {% endif %}"></span>

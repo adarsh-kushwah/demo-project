@@ -127,7 +127,7 @@ class BookingBillView(View):
             bill_form.save()
             return redirect(reverse("booking_bills", args=[booking_id]))
         else:
-            print("---------->", bill_form.errors)
+            print("-->", bill_form.errors)
 
         bills = Bill.objects.filter(booking_id=booking_id)
         context = {"bill_form": bill_form, "bills": bills, "booking": booking}

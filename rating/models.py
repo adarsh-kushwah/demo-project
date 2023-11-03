@@ -2,8 +2,6 @@ from django.db import models
 from user.models import UserProfile
 from property.models import Property, Booking
 
-# Create your models here.
-
 
 class AbstractPropertyRatingReview(models.Model):
     renter = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
