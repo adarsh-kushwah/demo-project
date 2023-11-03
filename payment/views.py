@@ -189,9 +189,7 @@ def my_webhook_view(request):
     payload = request.body
     sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None
-    endpoint_secret = (
-        settings.ENDPOINT_SECRET
-    )
+    endpoint_secret = settings.ENDPOINT_SECRET
 
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
@@ -223,10 +221,10 @@ def fulfill_order(user_id, bill_id, paying_amount, session_id, payment_intent):
     payable_amount = bill.amount - bill.paid_amount
 
     if paying_amount >= payable_amount:
-        #status = "paid"
+        # status = "paid"
         status = status_choices[0][0]
     else:
-        #status = "partial_paid"
+        # status = "partial_paid"
         status = status_choices[1][0]
 
     bill.status = status
