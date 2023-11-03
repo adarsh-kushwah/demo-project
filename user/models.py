@@ -10,7 +10,6 @@ class Location(models.Model):
     def __str__(self):
         return f"{self.postal_code},{self.city},{self.state}"
 
-
 class UserProfile(AbstractUser):
     USER_TYPE_CHOICES = (("renter", "Renter"), ("owner", "Owner"))
     MARRIAGE_STATUS_CHOICES = (
@@ -51,8 +50,9 @@ class BaseAddress(models.Model):
         abstract = True
 
     def full_address(self):
-        return f"{self.street_address}, {self.location.city}, {self.location.postal_code}, {self.location.state}"
-
+        if self.location:
+            return f"{self.street_address}, {self.location.city }, {self.location.postal_code}, {self.location.state}"
+        return f"{self.street_address}"
 
 class UserAddress(BaseAddress):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)

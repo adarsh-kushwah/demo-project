@@ -190,7 +190,7 @@ def my_webhook_view(request):
     sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None
     endpoint_secret = (
-        "whsec_fc8a04bccffd45dace668e2090f077006296dacc4d6cdefa45e4d76505b66595"
+        settings.ENDPOINT_SECRET
     )
 
     try:
@@ -218,13 +218,16 @@ def my_webhook_view(request):
 
 def fulfill_order(user_id, bill_id, paying_amount, session_id, payment_intent):
     bill = Bill.objects.get(id=bill_id)
+    status_choices = Bill.BILL_STATUS_CHOICES
     user = UserProfile.objects.get(id=user_id)
     payable_amount = bill.amount - bill.paid_amount
 
     if paying_amount >= payable_amount:
-        status = "paid"
+        #status = "paid"
+        status = status_choices[0][0]
     else:
-        status = "partial_paid"
+        #status = "partial_paid"
+        status = status_choices[1][0]
 
     bill.status = status
     Payment.objects.create(
