@@ -68,7 +68,6 @@ class ViewProfile(LoginRequiredMixin, UserAccessMixin, DetailView):
     """
     user and renter can view their profile
     """
-
     pk_url_kwarg = "user_id"
     login_url = reverse_lazy("login")
     model = UserProfile
