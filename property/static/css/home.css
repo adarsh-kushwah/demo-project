@@ -77,8 +77,7 @@
 
  /* price bar */
   .range_container {
-    display: flex;
-    flex-direction: column;
+    
     width: 90%;
     margin-left: 20px ;
   }
@@ -189,3 +188,10 @@
      padding: 10px;
      border: 1px solid #d3d3d3;
   }
+
+#filter_button{
+  margin : 10px;
+}
+#filter_button input[type="submit"]{
+  margin-left : 30px;
+}

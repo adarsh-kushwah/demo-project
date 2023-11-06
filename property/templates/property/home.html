@@ -50,35 +50,34 @@
                         {% if property_type %}
                             <input type="hidden" name='property_type' value={{property_type}} >
                         {% endif %}
-                        <input type="submit" value="filter">
-                    </form>
+                        <div style="margin-top:10px;">
+                            <h4>Property type</h4>
+                            <input type="radio" id="all" name="property_type" value="all" {% if property_type == 'all' or not property_type %} checked{% endif %}>
+                            <label for="all">All</label><br>
+                            <input type="radio" id="house" name="property_type" value="house" {% if property_type == 'house' %} checked {% endif %}>
+                            <label for="house">House</label><br>
+                            <input type="radio" id="apartment" name="property_type" value="apartment" {% if property_type == 'apartment' %} checked {% endif %}>
+                            <label for="apartment">Apartment</label><br>
+                            <input type="radio" id="flat_1bkh" name="property_type" value="flat_1bkh" {% if property_type == 'flat_1bkh' %} checked {% endif %}>
+                            <label for="flat_1bkh">Flat-1bhk</label><br>
+                            <input type="radio" id="flat_2bkh" name="property_type" value="flat_2bkh" {% if property_type == 'flat_2bkh' %} checked {% endif %}>
+                            <label for="flat_2bkh">Flat-2bhk</label><br>
+                            <input type="radio" id="flat_3bkh" name="property_type" value="flat_3bkh" {% if property_type == 'flat_3bkh' %} checked {% endif %}>
+                            <label for="flat_3bkh">Flat-3bhk</label>
+                        </div>
+                    <div id="filter_button">
+                        <a href="{% url 'home' %}">
+                            <input type="button" value="Clear search and filter">
+                        </a>
+                        <input type="submit" value="Filter">
+                    </div>
+                </form>
                 </div>
             </div>
-            <div class="range_container">
-                <h4>Property type</h4>
-                <form action="">
-                    <input type="radio" id="all" name="property_type" value="all" {% if property_type == 'all' or not property_type %} checked{% endif %}>
-                    <label for="all">All</label><br>
-                    <input type="radio" id="house" name="property_type" value="house" {% if property_type == 'house' %} checked {% endif %}>
-                    <label for="house">House</label><br>
-                    <input type="radio" id="apartment" name="property_type" value="apartment" {% if property_type == 'apartment' %} checked {% endif %}>
-                    <label for="apartment">Apartment</label><br>
-                    <input type="radio" id="flat_1bkh" name="property_type" value="flat_1bkh" {% if property_type == 'flat_1bkh' %} checked {% endif %}>
-                    <label for="flat_1bkh">Flat-1bhk</label><br>
-                    <input type="radio" id="flat_2bkh" name="property_type" value="flat_2bkh" {% if property_type == 'flat_2bkh' %} checked {% endif %}>
-                    <label for="flat_2bkh">Flat-2bhk</label><br>
-                    <input type="radio" id="flat_3bkh" name="property_type" value="flat_3bkh" {% if property_type == 'flat_3bkh' %} checked {% endif %}>
-                    <label for="flat_3bkh">Flat-3bhk</label>
-                    {% if search %}
-                        <input type="hidden" name='search' value={{search}} >
-                    {% endif %}
-                    {% if min_price and max_price %}
-                        <input type="hidden" name='min_price' value={{min_price}} >
-                        <input type="hidden" name='max_price' value={{max_price}} >
-                    {% endif %}
-                    <input type="submit" value="filter">
-                </form>
-            </div>
+            
+                
+                
+            
         </div>
         <div style="min-height:300px;margin-top:50px;margin-left:370px;{% if not property %} display: flex;justify-content: center;align-items: center;{% endif %}">
             {% for property in property %}

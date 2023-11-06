@@ -18,13 +18,24 @@ class Command(BaseCommand):
         file_path = options["file_path"]
 
         try:
-            df = pd.read_excel(file_path)  # Read the Excel file using pandas
-            data = df.to_dict(orient="records")  # Convert DataFrame to dictionary
+            df = pd.read_excel(file_path)
+            data = df.to_dict(orient="records")
             location_list = []
+            counter = 1
             for row in data:
+                state_city_pincode_dict = {key.lower(): str(value).capitalize()  for key, value in row.items()}
+                if counter == 1:
+                    keys_to_check = ["state", "city", "pincode"]
+                    if not all(key in state_city_pincode_dict for key in keys_to_check):
+                        self.stdout.write(
+                            self.style.SUCCESS("Column name should be 'state' 'city' 'pincode'")
+                        )
+                        return
+                    counter += 1
+                
                 state = row["state"]
                 city = row["city"]
-                pincode = str(row["pincode"])
+                pincode = row["pincode"]
                 location_list.append(
                     Location(state=state, city=city, postal_code=pincode)
                 )
@@ -33,7 +44,7 @@ class Command(BaseCommand):
             count_location = len(location)
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"{count_location} location data populated successfully."
+                    f"{'count_location'} location data populated successfully."
                 )
             )
 
