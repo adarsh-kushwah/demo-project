@@ -14,10 +14,6 @@ class PropertyTest(TestCase):
         self.owner = UserFactory()
         self.property = PropertyFactory(owner=self.owner)
 
-    # def test_login(self):
-    #     self.owner_login = Client()
-    #     response = self.owner_login.post(reverse("login"), {"username": self.owner.username, "password": self.owner.password})
-    #     self.assertEqual(response.status_code, 200)
 
     def test_with_several_property_by_one_owner(self):
         PropertyFactory.create_batch(5, owner=self.owner)
@@ -46,13 +42,3 @@ class PropertyTest(TestCase):
         """
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-
-
-# class PropertyDetailTest(TestCase):
-
-#     def test_view(self):
-#         """
-#         testing property detail page
-#         """
-#         response = self.client.get(reverse('property_detail',kwargs={'property_id':1}))
-#         self.assertEqual(response.status_code, 200)
