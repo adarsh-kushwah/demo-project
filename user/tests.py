@@ -12,8 +12,8 @@ class UserTest(TestCase):
 
     def test_login(self):
         self.owner_login = Client()
-        response = self.owner_login.post(reverse("login"), {"username": self.owner.username, "password": self.owner.password})
-        self.assertEqual(response.status_code, 200)
+        response = self.owner_login.post(reverse("login"), self.owner_login.force_login(self.owner))
+        self.assertEqual(response.context['user'].is_authenticated, True)
     
     def test_login_with_invalid_credentails(self):
         self.owner_login = Client()
