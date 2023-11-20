@@ -31,39 +31,71 @@
                         {% csrf_token %}
                         <div style="display:flex;" >
                             <div style="float:left;width:50%;padding:20px;" >
-                                
+                                {% if profile_form.username.errors %}
+                                    <span class="errorlist">
+                                        {% for error in profile_form.username.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </span>
+                                {% endif %}
+            
                                 <div class="form-outline mb-4">
-                                    <input required type="name" id="username_id" name="{{profile_form.username.name}}" class="form-control" />
+                                    <input required type="name" id="username_id" name="{{profile_form.username.name}}" value="{{profile_form.username.value}}" class="form-control" />
                                     <label class="form-label" for="username_id">Username</label>
                                 </div>
-
+                                
                                 <div class="form-outline mb-4">
-                                    <input required type="input" id="firstname_id" name="{{profile_form.first_name.name}}" class="form-control" />
+                                    <input required type="input" id="firstname_id" name="{{profile_form.first_name.name}}" value="{{profile_form.first_name.value}}" class="form-control" />
                                     <label class="form-label" for="firstname_id">First name</label>
                                 </div>
 
                                 <div class="form-outline mb-4">
-                                    <input type="name" id="lastname_id" name="{{profile_form.last_name.name}}" class="form-control" />
+                                    <input type="name" id="lastname_id" name="{{profile_form.last_name.name}}" value="{{profile_form.last_name.value}}" class="form-control" />
                                     <label class="form-label" for="lastname_id">Last name</label>
                                 </div>
-
+                                
+                                
+                                {% if profile_form.phone_number.errors %}
+                                    <span class="errorlist">
+                                        {% for error in profile_form.phone_number.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </span>
+                                {% endif %}
+                                
                                 <div class="form-outline mb-4">
-                                    <input required type="name" id="phone_id" name="{{profile_form.phone_number.name}}" class="form-control" />
+                                    <input required type="name" id="phone_id" name="{{profile_form.phone_number.name}}" value="{{profile_form.phone_number.value}}" class="form-control" />
                                     <label class="form-label" for="phone_id">Phone</label>
                                 </div>
 
+                                
+                                {% if profile_form.alternate_phone_number.errors %}
+                                    <span class="errorlist">
+                                        {% for error in profile_form.alternate_phone_number.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </span>
+                                {% endif %}
+                                
                                 <div class="form-outline mb-4">
-                                    <input type="name" id="alt_phone_id" name="{{profile_form.alternate_phone_number.name}}" class="form-control" />
+                                    <input type="name" id="alt_phone_id" name="{{profile_form.alternate_phone_number.name}}" value="{{profile_form.alternate_phone_number.value}}" class="form-control" />
                                     <label class="form-label" for="alt_phone_id">Alternate Phone</label>
                                 </div>
 
                                 <div class="form-outline mb-4">
-                                    <input required type="password" id="password1_id" name="{{profile_form.password1.name}}" class="form-control" />
+                                    <input required type="password" id="password1_id" name="{{profile_form.password1.name}}" value="{{profile_form.password1.value}}" class="form-control" />
                                     <label class="form-label" for="password1_id">Password</label>
                                 </div>
-
+                                
+                                {% if profile_form.password2.errors %}
+                                    <span class="errorlist">
+                                        {% for error in profile_form.password2.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </span>
+                                {% endif %}
                                 <div class="form-outline mb-4">
-                                    <input required type="password" id="password2_id" name="{{profile_form.password2.name}}" class="form-control" />
+                                    <input required type="password" id="password2_id" name="{{profile_form.password2.name}}" value="{{profile_form.password2.value}}" class="form-control" />
                                     <label class="form-label" for="password2_id">Confirm Password</label>
                                 </div>
                             </div>

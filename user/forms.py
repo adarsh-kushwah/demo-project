@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 
 from user.models import UserAddress, UserProfile, Location
 
@@ -51,3 +52,9 @@ class UserProfileModelForm(UserCreationForm):
             "password": forms.PasswordInput(),
             "date_of_birth": forms.widgets.DateInput(attrs={"type": "date"}),
         }
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data['phone_number']
+        if len(str(phone_number)) != 10:
+            raise ValidationError('phone number must be of 10 digits')
+        return phone_number

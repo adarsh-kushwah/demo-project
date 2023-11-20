@@ -1865,3 +1865,12 @@ section {
 .container{
   margin-right: 10px;
 }
+
+.errorlist {
+  color: red;
+  margin: 5px 0; /* Adjust margin as needed */
+  padding: 5px; /* Adjust padding as needed */
+  border: 1px solid red; /* Add a border for better visibility */
+  border-radius: 5px; /* Optional: Add rounded corners */
+  background-color: #ffe6e6; /* Optional: Add a background color */
+}
