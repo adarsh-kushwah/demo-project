@@ -1,7 +1,7 @@
 from django.db import models
 from user.models import UserProfile, BaseAddress
 import uuid
-
+from django.db.models import Q
 
 class Property(models.Model):
     PROPERTY_TYPES_CHOICES = (
@@ -26,6 +26,16 @@ class Property(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} {self.property_type}"
+
+    def save(self, *args, **kwargs):
+        """
+            updating responsed rent amount if rent amount is changed by owner
+            and booking not confirmed by renter
+        """
+        status_choice = PropertyRequestResponse.STATUS_CHOICES
+        property_request_response = PropertyRequestResponse.objects.filter(Q(status=status_choice[1][0]), request_response_property=self, user__user_type='owner')
+        property_request_response.update(rent_amount=self.rent_amount)
+        super().save(*args, **kwargs)
 
 
 class PropertyAddress(BaseAddress):
@@ -108,7 +118,7 @@ class PropertyRequestResponse(models.Model):
 
 
 class Booking(models.Model):
-    """
+    """DateTimeField
     stores Property booking by renter
     """
 

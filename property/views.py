@@ -14,7 +14,6 @@ from django.db.models import Q, Subquery, Avg
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse, QueryDict
 
-
 from user.models import UserProfile
 
 from property.models import (

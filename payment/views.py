@@ -34,6 +34,7 @@ from django.conf import settings
 
 
 class AllBookingBillView(View):
+    
     def get(self, request, *args, **kwargs):
         user_id = self.request.user.id
         bookings = Booking.objects.filter(
