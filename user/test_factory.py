@@ -15,5 +15,5 @@ class UserFactory(factory.django.DjangoModelFactory):
     phone_number = faker.random_number(10)
     password = faker.password()
 
-    while len(phone_number) != 10 or not phone_number.isdigit():
-        phone_number = faker.phone_number()
+    # while len(phone_number) != 10 or not phone_number.isdigit():
+    #     phone_number = faker.phone_number()

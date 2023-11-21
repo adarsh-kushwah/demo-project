@@ -12,8 +12,7 @@
         <div style="border: 2px solid red;width: 80%;padding: 5px;">
             <h4 >Name:  {{booking.property_request_response.request_response_property.name|default:"not available"}} </h4>
             <h4 >Address: {{booking.property_request_response.request_response_property.propertyaddress.full_address|default:"not available"}} </h4>
-            <h4 >Type: {{booking.property_request_response.request_response_property.property_type|default:"not available"}}</h4>
-            <h4>Rent amount : {{booking.property_request_response.request_response_property.rent_amount}}</h4>
+            <h4 >Type: {{booking.property_request_response.request_response_property.property_type|default:"not available"}}</h4>            
             <h4>Rented amount : {{booking.property_request_response.rent_amount}}</h4>
             <h4>Requested date : {{booking.property_request_response.created_at.date}}</h4>
             <h4>Start date :{{booking.property_request_response.start_date}}</h4>

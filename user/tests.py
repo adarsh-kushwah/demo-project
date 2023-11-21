@@ -9,7 +9,7 @@ class UserTest(TestCase):
 
     def setUp(self):
         self.owner = UserFactory()
-
+    
     def test_login(self):
         self.owner_login = Client()
         response = self.owner_login.post(reverse("login"), self.owner_login.force_login(self.owner))
@@ -24,13 +24,15 @@ class UserTest(TestCase):
 
     def test_signup_existing_username(self):
         client = Client()
-        duplicate_username_data = {
+        response = self.client.post(reverse("signup"),self.duplicate_username_data())
+        status = dict(response.__dict__['context'][0]['errors'])['username'][0]
+        self.assertEquals(status, "A user with that username already exists." )
+    
+    def duplicate_username_data(self):
+        return {
             'username' : self.owner.username,
             'user_type' : "owner",
             'gender' : 'male',
             'phone_number' : "1234567895",
             'password' : "Indore@123"
         }
-        response = self.client.post(reverse("signup"),duplicate_username_data)
-        status = dict(response.__dict__['context'][0]['errors'])['username'][0]
-        self.assertEquals(status, "A user with that username already exists." )
