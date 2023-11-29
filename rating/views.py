@@ -39,6 +39,7 @@ class RenterRatingView(View):
     login_url = "/user/login/"
 
     def post(self, request, *args, **kwargs):
+        
         booking_id = self.kwargs["booking_id"]
         rating = request.POST.get("star", 0)
         booking = Booking.objects.get(id=booking_id)
@@ -64,6 +65,7 @@ class PropertyReviewView(View):
     login_url = "/user/login/"
 
     def post(self, request, *args, **kwargs):
+
         booking_id = self.kwargs["booking_id"]
         booking = Booking.objects.get(id=booking_id)
         property_review = PropertyReview.objects.filter(booking=booking)
@@ -90,6 +92,7 @@ class PropertyReviewView(View):
 
 
 class RenterReviewView(View):
+
     def post(self, request, *args, **kwargs):
         booking_id = self.kwargs["booking_id"]
         booking = Booking.objects.get(id=booking_id)
