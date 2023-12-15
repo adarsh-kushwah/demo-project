@@ -89,13 +89,20 @@ WSGI_APPLICATION = "rentify.wsgi.application"
 #     }
 # }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "rentify",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "localhost",
-        "PORT": "5432",
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": "rentify",
+    #     "USER": "postgres",
+    #     "PASSWORD": "postgres",
+    #     "HOST": "localhost",
+    #     "PORT": "5432",
+    # },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'rentify-database',
+        'USER': 'root',
+        'PASSWORD': 'secret',
+        'HOST':'db',
     }
 }
 

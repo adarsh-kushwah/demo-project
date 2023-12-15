@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:13-alpine
+    container_name: SqlCont 
+    environment:
+      - POSTGRES_DB=rentify-database
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - "5432:5432"
+    volumes:
+    - rentify-volume:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.:/app
+    command:
+      sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+
+volumes:
+  rentify-volume:
