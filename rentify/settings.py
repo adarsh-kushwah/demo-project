@@ -35,6 +35,8 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "celery",
+    'django_celery_results',
     "user.apps.UserConfig",
     "property.apps.PropertyConfig",
     "rating.apps.RatingConfig",
@@ -89,21 +91,21 @@ WSGI_APPLICATION = "rentify.wsgi.application"
 #     }
 # }
 DATABASES = {
-    # "default": {
-    #     "ENGINE": "django.db.backends.postgresql",
-    #     "NAME": "rentify",
-    #     "USER": "postgres",
-    #     "PASSWORD": "postgres",
-    #     "HOST": "localhost",
-    #     "PORT": "5432",
-    # },
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'rentify-database',
-        'USER': 'root',
-        'PASSWORD': 'secret',
-        'HOST':'db',
-    }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "rentify",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "localhost",
+        "PORT": "5432",
+    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'rentify-database',
+    #     'USER': 'root',
+    #     'PASSWORD': 'secret',
+    #     'HOST':'db',
+    # }
 }
 
 
@@ -168,3 +170,17 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
+
+CELERY_RESULT_BACKEND = 'django-db'
+#CELERY_CACHE_BACKEND = 'django-cache'
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'my_cache_table',
+#     }
+# }legacy
+
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+

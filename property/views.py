@@ -38,6 +38,8 @@ from payment.utility import generate_pdf
 
 from property.mixins import ProperetyAccessMixin
 
+from property.tasks import testing_celery
+
 
 class Home(View):
     """
@@ -79,6 +81,10 @@ class Home(View):
                 .annotate(rating=Avg("propertyrating__rating", default=0))
                 .order_by("created_at")
             )
+            result = testing_celery.delay(4,5)
+            if result.ready():
+                print('--->ready result',result.result)
+            print('celery--->',result)
 
         if "search" in request.GET:
             search_value = request.GET.get("search")
