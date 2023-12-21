@@ -81,10 +81,6 @@ class Home(View):
                 .annotate(rating=Avg("propertyrating__rating", default=0))
                 .order_by("created_at")
             )
-            result = testing_celery.delay(4,5)
-            if result.ready():
-                print('--->ready result',result.result)
-            print('celery--->',result)
 
         if "search" in request.GET:
             search_value = request.GET.get("search")
@@ -117,6 +113,12 @@ class Home(View):
         page_obj = paginated_list.get_page(page_number)
 
         context["property"] = page_obj
+
+        result = testing_celery.delay(4,5)
+        if result.ready():
+            print('--->ready result',result.result)
+        print('celery--->',result)
+        print('--->><>ccele')
         return render(request, self.template_name, context)
 
 

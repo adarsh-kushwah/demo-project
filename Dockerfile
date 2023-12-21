@@ -1,10 +1,10 @@
 FROM python:3
 
-RUN mkdir /app
+# RUN mkdir /app
 
 WORKDIR /app
 
-EXPOSE 8000
+EXPOSE 3000
 
 COPY requirements.txt .
 

@@ -3,18 +3,21 @@ version: "3"
 services:
   db:
     image: postgres:13-alpine
-    container_name: SqlCont 
+    container_name: PostgresCont 
     environment:
-      - POSTGRES_DB=rentify-database
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB= "${POSTGRES_DB}"
+      - POSTGRES_USER= "${POSTGRES_USER}"
+      - POSTGRES_PASSWORD= "${POSTGRES_PASSWORD}"
     ports:
       - "5432:5432"
     volumes:
     - rentify-volume:/var/lib/postgresql/data
+    env_file:
+      - .env
 
   app:
     build: .
+    container_name: RentifyCont
     ports:
       - "8000:8000"
     volumes:
@@ -23,6 +26,35 @@ services:
       sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
+
+  celery:
+    # restart: always
+    build:
+      context: .
+    command: celery -A rentify worker -l info
+    container_name: CeleryCont
+    volumes:
+      - ./.:/app
+    environment:
+      - DB_HOST=db
+      - DB_NAME=rentify-database
+      - DB_USER=root
+      - DB_PASS=secret
+    depends_on:
+      - redis
+      - app
+
+  redis:
+    image: redis:6-alpine
+    container_name: RedisCont 
+
+  stripe-cli:
+    image: stripe/stripe-cli
+    container_name: StripeCont
+    network_mode: host
+    command: "listen --api-key ${STRIPE_SECRET_KEY} --forward-to 127.0.0.1:8000/webhook"
+    env_file:
+      - .env
 
 volumes:
   rentify-volume:

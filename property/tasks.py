@@ -2,7 +2,6 @@ from celery import shared_task
 import time
 
 
-
 @shared_task
 def testing_celery(x,y):
     print('_________------hello->')
